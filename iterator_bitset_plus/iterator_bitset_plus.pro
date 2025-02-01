@@ -63,7 +63,7 @@ QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2
 
 LIBS += \                               #https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/Link-Options.html
     -lpthread               \
-    -lstdc++exp
+    -lstdc++exp             \
    #-lstdc++_libbacktrace   \       # allowed stack_trace to work in gcc 13, not 14, there needed -lstdc++exp
    #-lbson                  \
    #-lmongoc                \
@@ -120,8 +120,9 @@ HEADERS += \
 
 SOURCES += \
     biterator.cpp \
-    main.cpp \
+#   main.cpp \
+    main.t.cpp
 #    iostreams.cpp \
 #    global_entities.cpp \
 #    random_toolkit.cpp \
-####################################################
+ \####################################################

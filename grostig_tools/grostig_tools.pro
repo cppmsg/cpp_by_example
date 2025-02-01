@@ -129,6 +129,7 @@ SOURCES += \
     main.cpp \
     global_entities.cpp \
     iostreams.cpp \
+    math_grostig.cpp \
     ostream_joiner_gr.cpp \
     random_toolkit.cpp \
 
