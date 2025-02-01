@@ -54,7 +54,7 @@ tend to expect niladic function objects as arguments.
 namespace grostig {
 
 std::mt19937_64 & global_urbg() {
-//  static std::default_random_engine u{};
+// static std::default_random_engine u{};
   static std::mt19937_64 u {};
   return u;
 }
@@ -64,8 +64,10 @@ void randomize() {
   global_urbg().seed( rd() );
 }
 
-/* everything below to end of file is * commented out
- * ======================================
+/*  The overloaded pick_a_number functions below are reformulated as
+    function templates in the header. This approach allows callers the additional freedom to
+    specify their desired return type.
+
 int pick_a_number(int from, int thru) {
   static std::uniform_int_distribution<> d{};
   using parm_t = decltype(d)::param_type;  // why does qtcreator show error for this line?  todo
@@ -76,33 +78,7 @@ double pick_a_number(double from, double upto) {
   static std::uniform_real_distribution<> d{};
   using parm_t = decltype(d)::param_type;
   return d(global_urbg(), parm_t{from, upto});
-}
- */
-
-/* function template
-The overloaded pick_a_number functions shown in the previous section can be
-reformulated as
-function templates. This approach allows callers the additional freedom to
-specify their desired
-return type:
-    */
-
-/* template <class T>
-std::enable_if_t<std::is_integral<T>{}(), T>
-    pick_a_number_t(T from, T thru) {  // why does qtcreator show error for this line?  todo
-  static std::uniform_int_distribution<T> d{};
-  using parm_t = typename decltype(d)::param_type; // had to add typename to resolve compile error?  todo
-  return d(global_urbg(), parm_t{from, thru});
-}
-
-template <class T>
-std::enable_if_t<std::is_floating_point<T>{}(), T>
-    pick_a_number_t(T from, T upto) {
-  static std::uniform_real_distribution<T> d{};
-  using parm_t = typename decltype(d)::param_type; // had to add typename to resolve compile error?  todo
-  return d(global_urbg(), parm_t{from, upto});
-}
-*/
+} */
 
 /* class toolkit
 

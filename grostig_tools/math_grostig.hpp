@@ -4,125 +4,25 @@
    License: Boost v1.0
    Permission is granted to use these files during and in support of CppMSG meetup group events and projects.
 
-   Inspired by:
+   Inspired by: Learning from Data AI book and online MOOC? course.
    Shows how to:
 */
-
-#include "cpp_headers.hpp"
 #pragma once
+#include "cpp_headers.hpp"
 static const double grostig_pi = 3.141592653589793;
 
-double n_Choose_k(unsigned long const n,
-                  unsigned long k) // copy of k is mutated.
-{
-  if (k > n)
-    return 0;
-  if (k * 2 > n)
-    k = n - k;
-  if (k == 0)
-    return 1;
+double n_Choose_k(unsigned long const n, unsigned long k);
 
-  double result = n;
-  for (unsigned long i = 2; i <= k; ++i) {
-    result *= (n - i + 1);
-    result /= i;
-  }
-  return result;
-}
+double n_Choose_kf(double const n, double k);
 
-double n_Choose_kf(double const n,
-                  double k) // copy of k is mutated.
-{
-  if (k > n)
-    return 0;
-  if (k * 2 > n)
-    k = n - k;
-  if (k < 0.1)
-    return 1;
+double factorial(unsigned long const x, unsigned long const result = 1);
 
-  double result = n;
-  for (unsigned long i = 2; i <= k; ++i) {
-    result *= (n - i + 1);
-    result /= i;
-  }
-  return result;
-}
+double m_subH_max(unsigned long const n_uc, unsigned long const vc_dim);
 
-double factorial(unsigned long const x, unsigned long const result = 1) {
-  if (x == 1)
-    return result;
-  else
-    return factorial(x - 1, x * result);
-}
+double m_subH_maxf(double const n_uc, double const vc_dim);
 
-double m_subH_max(unsigned long const n_uc, unsigned long const vc_dim) {
-  double sum = 0;
-  for (unsigned long i = 0; i <= vc_dim; i++) {
-    sum += n_Choose_k(n_uc, i);
-  }
-  return sum;
-}
+double m_subH_max_est(double const n_uc, double const vc_dim);
 
-double m_subH_maxf(double const n_uc, double const vc_dim) {
-  double sum = 0;
-  for (double i = 0; i <= vc_dim; i++) {
-    sum += n_Choose_kf(n_uc, i);
-  }
-  return sum;
-}
+double ge_converge1(double vc_dim, unsigned long n, double delta);
 
-double m_subH_max_est(double const n_uc, double const vc_dim) {
-  double sum = 0;
-  sum = std::pow(n_uc, vc_dim);
-  return sum;
-}
-
-double ge_converge1(double vc_dim, unsigned long n, double delta) {
-  double epsilon_starting = 10;
-  const double increment = 0.0001;
-
-  double epsilon = epsilon_starting;
-  double current =
-      std::sqrt(1.0 / n * (2.0 * epsilon +
-                           log(6.0 * (m_subH_max(2.0 * n, vc_dim)) / delta)));
-  cout << "\n Initial epsilon_starting, current: " << epsilon << ", "
-       << current;
-
-  while ((fabs(epsilon) <= epsilon_starting) && !(epsilon <= current)) {
-    epsilon -= increment;
-    current =
-        std::sqrt(1.0 / n * (2.0 * epsilon +
-                             log(6.0 * (m_subH_max(2.0 * n, vc_dim)) / delta)));
-    cerr << "\n epsilon, current: " << epsilon << ", " << current;
-  }
-  return current;
-}
-
-double ge_converge2(double vc_dim, double n, double delta) {
-  double epsilon_starting = .05;
-  const double increment = 0.01;
-
-  double epsilon = epsilon_starting;
-//  double q0 = std::pow(n, 2.0);
-//  double q1 = m_subH_max_est(n, vc_dim);
-//  cout << " q1: " << q1;
-//  double q2 = log(4.0 * m_subH_max_est(std::pow(n, 2.0), vc_dim) / delta);
-//  cout << " q2: " << q2;
-  double current =
-          std::sqrt((1.0 / (2.0 * n)) *
-                                  (4.0 * epsilon * (1.0 + epsilon)
-                                   +
-                                   log(4.0 * m_subH_max_est(n, vc_dim) / delta)));
-  cout << "\n Initial epsilon_starting, current: " << epsilon << ", "
-       << current << endl;
-
-  while ((fabs(epsilon) <= epsilon_starting) && !(epsilon <= current)) {
-    epsilon -= increment;
-    current = std::sqrt((1.0 / (2.0 * n)) *
-                        (4.0 * epsilon * (1.0 + epsilon)
-                         +
-                         log(4.0 * m_subH_max_est(n, vc_dim) / delta)));
-    cerr << "\n epsilon, current: " << epsilon << ", " << current;
-  }
-  return current;
-}
+double ge_converge2(double vc_dim, double n, double delta);

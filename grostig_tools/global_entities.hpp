@@ -1,4 +1,3 @@
-#pragma once
 /** Copyright (c) Grant Rostig, grantrostig.com 2023. Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
     NOT PRODUCTION QUALITY CODE, just shows learning/teaching example, not real programming, don't copy this style, just playing around
     Reminder of usefull resources:
@@ -38,6 +37,7 @@
     #ifdef GR_DEBUG
     #endif GR_DEBUG
  */
+#pragma once
 //#include <boost/dynamic_bitset.hpp>
 //#include <boost/multiprecision/cpp_int.hpp>
 //#include <dlib/numeric_constants.h>

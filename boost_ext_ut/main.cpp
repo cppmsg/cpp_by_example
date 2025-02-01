@@ -80,6 +80,19 @@ suite<"my_nameofsuite"> errors = [] { // OR suite errors = []
 }; // int main() { }
 
 int main(int argc, char* arv[]) { string my_arv{*arv}; cout << "$$ ~~~ argc, argv:"<<argc<<","<<my_arv<<"."<<endl; cin.exceptions( std::istream::failbit); // Detail::crash_signals_register();
+    //boost::ut::expect(true);
+    //boost::ut::expect(1 == 2);
+    //boost::ut::expect(1_i == 2);
+    //boost::ut::expect(1 == 2_i);
+    //boost::ut::expect(1_i == 2_i);
+    //boost::ut::expect(that % 1 == 2);
+    //boost::ut::expect(that % 1 == % 2); // no compile
+    //boost::ut::expect(that % 1 == that % 2); // compile, but doesn't fail!
+    //boost::ut::expect( fatal(that % 1 == 2));
+    //expect( eq(1, 2)) << "grostig";
+    //expect( fatal(eq(1, 2))) << "grostig";
+    //expect( 42l == 42_l and 1 == 2_i) << "grostig" << std::endl;  // TODO??: endl does not work.
+    //expect( fatal( 42l == 42_l and 1 == 2_i) )<< "grostig. \n";  //
     expect(true);
     expect(                 1   == 2  );
     expect(                 1_i == 2  );

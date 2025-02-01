@@ -189,27 +189,7 @@ std::mt19937_64 &global_urbg();  // forward
 
 void randomize();
 
-/* non-templated version - I'm using the templated version
-int pick_a_number(int from, int thru) {
-  static std::uniform_int_distribution<> d{};
-  using parm_t = decltype(d)::param_type;  // why does qtcreator show error for
-this line?  todo
-  return d(global_urbg(), parm_t{from, thru});
-}
-
-double pick_a_number(double from, double upto) {
-  static std::uniform_real_distribution<> d{};
-  using parm_t = decltype(d)::param_type;
-  return d(global_urbg(), parm_t{from, upto});
-}
-*/
-
-/* function template
-    The overloaded pick_a_number functions shown in the previous section can be
-   reformulated as function templates. This approach allows callers the
-   additional freedom to specify their desired return type:
- */
-
+// The templated version, a non-templated version exits in .cpp
 template <class T>
 std::enable_if_t<std::is_integral<T>{}(), T>
     pick_a_number_t(T from, T thru) {  // why does qtcreator show error for this line?  todo
