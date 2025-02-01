@@ -107,25 +107,25 @@ namespace biterator {
         {
             assert(((not rhs.bs_) or (not lhs.bs_)) && "Comparing iterator not referencing a container.");
             assert(rhs.bs_ == lhs.bs_ && "Comparing iterators from different containers.");
-            return rhs.offset > lhs.offset; // Offset progress downward, so > offset reflects a < interator.
+            return rhs.offset_ > lhs.offset_; // Offset progress downward, so > offset reflects a < interator.
         };
         friend auto operator>(bitset_iter const& rhs,  bitset_iter const& lhs)
         {
             assert(((not rhs.bs_) or (not lhs.bs_)) && "Comparing iterator not referencing a container.");
             assert(rhs.bs_ == lhs.bs_ && "Comparing iterators from different containers.");
-            return rhs.offset < lhs.offset; // Offset progress downward, so < offset reflects a > interator.
+            return rhs.offset_ < lhs.offset_; // Offset progress downward, so < offset reflects a > interator.
         };
         friend auto operator<=(bitset_iter const& rhs,  bitset_iter const& lhs)
         {
             assert(((not rhs.bs_) or (not lhs.bs_)) && "Comparing iterator not referencing a container.");
             assert(rhs.bs_ == lhs.bs_ && "Comparing iterators from different containers.");
-            return rhs.offset >= lhs.offset; // Offset progress downward, so >= offset reflects a <= interator.
+            return rhs.offset_ >= lhs.offset_; // Offset progress downward, so >= offset reflects a <= interator.
         };
         friend auto operator>=(bitset_iter const& rhs,  bitset_iter const& lhs)
         {
             assert(((not rhs.bs_) or (not lhs.bs_)) && "Comparing iterator not referencing a container.");
             assert(rhs.bs_ == lhs.bs_ && "Comparing iterators from different containers.");
-            return rhs.offset <= lhs.offset; // Offset progress downward, so <= offset reflects a >= interator.
+            return rhs.offset_ <= lhs.offset_; // Offset progress downward, so <= offset reflects a >= interator.
         };
     
         bitset_iter& operator+=(int delta)
@@ -269,7 +269,7 @@ namespace biterator {
             }
             return *this;
         }
-        Bitsource_forward_iter & operator++(int) /* postfix */
+        Bitsource_forward_iter operator++(int) /* postfix */
         {
             auto result{*this};
             ++this;
