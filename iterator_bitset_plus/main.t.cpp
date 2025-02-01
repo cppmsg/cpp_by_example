@@ -20,10 +20,12 @@ int main() {
 
     std::cout << "$$ binary_source:";
     std::copy(begin(binary_source), end(binary_source), std::ostream_iterator<bool>(std::cout));
-    std::copy(begin(binary_source), end(binary_source), biterator::Bitset_output_iter{ small_sink });
+    std::copy(begin(binary_source), end(binary_source), biterator::Bitset_iter{ small_sink });
     std::cout << "\n$$ small_sink   :" << small_sink;
-    std::copy(begin(binary_source) + 3, end(binary_source), biterator::Bitset_output_iter{ small_sink, 3 });
+    std::copy(begin(binary_source) + 3, end(binary_source), biterator::Bitset_iter{ small_sink, 3 });
     std::cout << "\n$$ small_sink   :   " << small_sink.to_string().substr(3) << " (offset of 3)\n\n";
+
+    std::cout << "$$ testing biterator::Bitsource_forward_iter:";
 
     std::cout << "$$ string_source:";
     std::for_each(begin(string_source), end(string_source),
@@ -40,10 +42,6 @@ int main() {
     std::advance(starting_position, 10);
     std::copy(starting_position, biterator::end<6, 0>(string_source), biterator::Bitset_output_iter{ big_sink, 10 });
     std::cout << "\n$$ big_sink     :          " << big_sink.to_string().substr(10) << " (offset of 10)\n\n";
-
-    std::cout << "$$ testing biterator::Bitsource_forward_iter:";
-
-
 
     std::cout << "\n###" << std::endl;
 }
