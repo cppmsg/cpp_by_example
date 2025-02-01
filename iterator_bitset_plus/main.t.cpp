@@ -1,7 +1,7 @@
 // Boost 1.0 license
 // Inspired by Jon Kalb's code
 
-// g++ -std=c++2b main.t.cpp
+// g++ -std=c++2b -Werror -Wpedantic -Wall -Wextra main.t.cpp
 
 #include "biterator.hpp"
 

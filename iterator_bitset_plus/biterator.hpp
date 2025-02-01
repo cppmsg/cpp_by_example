@@ -4,6 +4,7 @@
 
 #include <bitset>
 #include <cassert>
+#include <cstddef>
 #include <iostream>
 
 namespace biterator {
@@ -71,9 +72,9 @@ namespace biterator {
 
         bitset_iter() = default;
         bitset_iter(bitset_iter const& orginal) = default;
-        bitset_iter(std::bitset<bitset_size> & bs, std::size_t initial_offset = 0):
+        bitset_iter(std::bitset<bitset_size> & bs, ssize_t initial_offset = 0):
             bs_{ &bs },
-            offset_{ bitset_size - initial_offset - 1}
+            offset_{ ssize_t{bitset_size} - initial_offset - 1}
         {}
         auto operator*() -> BitRefProxy { return BitRefProxy(*bs_, offset_);}
 
@@ -128,17 +129,17 @@ namespace biterator {
             return rhs.offset_ <= lhs.offset_; // Offset progress downward, so <= offset reflects a >= interator.
         };
     
-        bitset_iter& operator+=(int delta)
+        bitset_iter& operator+=(ssize_t delta)
         {
             assert(delta <= offset_ && "Incrementing iterator past end of bitset.");
             offset_ -= delta; return this;
         }
-        friend bitset_iter operator+(bitset_iter const& lhs, int delta)
+        friend bitset_iter operator+(bitset_iter const& lhs, ssize_t delta)
         {
             assert(delta <= (lhs.offset_ + 1) && "Incrementing iterator past end of bitset.");
             return bitset_iter(*lhs.bs_, bitset_size - lhs.offset_ - 1 + delta);
         }
-        friend bitset_iter operator+(int delta, bitset_iter const& rhs)
+        friend bitset_iter operator+(ssize_t delta, bitset_iter const& rhs)
         {
             assert(delta <= rhs.offset_ && "Incrementing iterator past end of bitset.");
             return bitset_iter(*rhs.bs_, rhs.offset_ - delta);
@@ -163,7 +164,7 @@ namespace biterator {
         reference operator[](std::size_t) const {current_value_ = (*bs_)[offset_]; return current_value_;}
     private:
         std::bitset<bitset_size> *bs_{nullptr};
-        std::size_t              offset_{0};
+        ssize_t                  offset_{0};
         bool                     current_value_{false};
     };
     
