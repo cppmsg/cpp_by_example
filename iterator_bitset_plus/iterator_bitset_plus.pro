@@ -42,7 +42,7 @@ QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2
         #-fsanitize=undefined #60K link errors possible   \
         -Wall   		        \  # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
         -Wextra   		        \
-        -Weffc++                \
+       #-Weffc++                \
         -Wconversion            \
         -Wsign-conversion       \
         -Wdeprecated-declarations\

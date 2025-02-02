@@ -56,7 +56,6 @@ int main() {
     {
         std::copy(biterator::bitset_iter{big_sink} + (i * 7), biterator::bitset_iter{big_sink} + ((i + 1) * 7), biterator::begin(int_value));
         std::cout << int_value << '(' << char(int_value) << ") ";
-        int_value = 0;
     }
 
     std::cout << "\n###" << std::endl;

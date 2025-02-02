@@ -20,13 +20,17 @@ namespace biterator {
             if (last_bit > start_bit) return Direction::Up;
             return Direction::Down;
         }
+        template <class T>
+            requires std::is_integral_v<T>
         consteval auto make_mask(auto bit_position)
             requires std::is_integral_v<decltype(bit_position)>
         {
-            uintmax_t mask_value{ 1 };
+            T mask_value{ 1 };
             return mask_value << bit_position;
         }
-        constexpr auto increment_mask(uintmax_t &mask, Direction d)
+        template <class T>
+            requires std::is_integral_v<T>
+        constexpr auto shift_mask(T &mask, Direction d)
         {
             if (d == Direction::Up) { mask <<= 1; } else if (d == Direction::Down) { mask >>= 1; }
             // Direction::neither is a no-op.
@@ -157,7 +161,7 @@ namespace biterator {
         friend difference_type operator-(bitset_iter const& lhs, bitset_iter const& rhs)
         {
             assert(rhs.bs_ == lhs.bs_ && "Subtracting iterators from different containers.");
-            return difference_type(rhs.offset) - difference_type(lhs.offset_);
+            return difference_type(rhs.offset_) - difference_type(lhs.offset_);
             // Offset progress downward, so Subtrahend - Minuend instead of Minuend - Subtrahend.
         }  
     
@@ -189,7 +193,7 @@ namespace biterator {
         auto operator*() -> Bitout_integral_value & { return *this; }
         auto operator++() /* prefix */
         {
-            increment_mask(current_mask_, direction_);
+            shift_mask(current_mask_, direction_);
             return *this;
         }
         auto operator++(int) /* postfix */
@@ -200,6 +204,8 @@ namespace biterator {
         }
         auto operator=(bool val) -> Bitout_integral_value &
         {
+            integral_t clearing_mask{~current_mask_};
+            sink_ &= clearing_mask;
             sink_ |= (val * current_mask_);
             return *this;
         }
@@ -210,11 +216,11 @@ namespace biterator {
         auto operator!=(Bitout_integral_value const &other) const { return !(*this == other); }
 
     private:
-        static constexpr uintmax_t         start_mask_  { detail::make_mask(start_bit) };
-        static constexpr uintmax_t         last_mask_   { detail::make_mask(last_bit) };
+        static constexpr integral_t        start_mask_  { detail::make_mask<integral_t>(start_bit) };
+        static constexpr integral_t        last_mask_   { detail::make_mask<integral_t>(last_bit) };
         static constexpr detail::Direction direction_   { detail::direction(start_bit, last_bit) };
         integral_t                         &sink_;
-        uintmax_t                          current_mask_{ start_mask_ };
+        integral_t                         current_mask_{ start_mask_ };
     };
     
     template <std::integral integral_t, auto start_bit = 6, auto last_bit = 0>
@@ -266,7 +272,7 @@ namespace biterator {
             }
             else
             {
-                increment_mask(current_mask_, direction_);
+                shift_mask(current_mask_, direction_);
             }
             return *this;
         }
@@ -296,13 +302,15 @@ namespace biterator {
         bool operator!=(Bitsource_forward_iter const &other) const { return !(*this == other); }
 
     private:
-        static constexpr uintmax_t         start_mask_  { detail::make_mask(start_bit) };
-        static constexpr uintmax_t         last_mask_   { detail::make_mask(last_bit) };
-        static constexpr detail::Direction direction_   { detail::direction(start_bit, last_bit) };
-        Container                         *container_;
-        typename Container::const_iterator cont_iter_;
-        uintmax_t                          current_mask_{ start_mask_ };
-        mutable bool                       current_value_{false};
+        static constexpr typename Container::value_type start_mask_
+            { detail::make_mask<typename Container::value_type>(start_bit) };
+        static constexpr typename Container::value_type last_mask_
+            { detail::make_mask<typename Container::value_type>(last_bit) };
+        static constexpr detail::Direction  direction_   { detail::direction(start_bit, last_bit) };
+        Container                           *container_;
+        typename Container::const_iterator  cont_iter_;
+        typename Container::value_type      current_mask_{ start_mask_ };
+        mutable bool                        current_value_{false};
     };
     
     template <auto start_bit = 0, auto last_bit = 7, Integral_container Container = std::string>
