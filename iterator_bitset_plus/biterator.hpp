@@ -5,6 +5,7 @@
 #include <bitset>
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 
 namespace biterator {
@@ -26,7 +27,9 @@ namespace biterator {
             uintmax_t mask_value{ 1 };
             return mask_value << bit_position;
         }
-        constexpr auto increment_mask(uintmax_t &mask, Direction d)
+        template <class T>
+            requires std::is_integral_v<T>
+        constexpr auto shift_mask(T &mask, Direction d)
         {
             if (d == Direction::Up) { mask <<= 1; } else if (d == Direction::Down) { mask >>= 1; }
             // Direction::neither is a no-op.
@@ -157,7 +160,7 @@ namespace biterator {
         friend difference_type operator-(bitset_iter const& lhs, bitset_iter const& rhs)
         {
             assert(rhs.bs_ == lhs.bs_ && "Subtracting iterators from different containers.");
-            return difference_type(rhs.offset) - difference_type(lhs.offset_);
+            return difference_type(rhs.offset_) - difference_type(lhs.offset_);
             // Offset progress downward, so Subtrahend - Minuend instead of Minuend - Subtrahend.
         }  
     
@@ -189,7 +192,7 @@ namespace biterator {
         auto operator*() -> Bitout_integral_value & { return *this; }
         auto operator++() /* prefix */
         {
-            increment_mask(current_mask_, direction_);
+            shift_mask(current_mask_, direction_);
             return *this;
         }
         auto operator++(int) /* postfix */
@@ -200,6 +203,8 @@ namespace biterator {
         }
         auto operator=(bool val) -> Bitout_integral_value &
         {
+            integral_t clearing_mask{~current_mask_};
+            sink_ &= clearing_mask;
             sink_ |= (val * current_mask_);
             return *this;
         }
@@ -214,7 +219,7 @@ namespace biterator {
         static constexpr uintmax_t         last_mask_   { detail::make_mask(last_bit) };
         static constexpr detail::Direction direction_   { detail::direction(start_bit, last_bit) };
         integral_t                         &sink_;
-        uintmax_t                          current_mask_{ start_mask_ };
+        integral_t                         current_mask_{ start_mask_ };
     };
     
     template <std::integral integral_t, auto start_bit = 6, auto last_bit = 0>
@@ -266,7 +271,7 @@ namespace biterator {
             }
             else
             {
-                increment_mask(current_mask_, direction_);
+                shift_mask(current_mask_, direction_);
             }
             return *this;
         }
