@@ -3,7 +3,7 @@
 */
 #include "global_entities.hpp"
 //#include <bits/stdc++.h>
-#include <gsl/gsl>      // $ sudo dnf install guidelines-support-library-devel
+//#include <gsl/gsl>      // $ sudo dnf install guidelines-support-library-devel
 #include <cassert>
 #include <csignal>
 #include <iostream>
@@ -17,7 +17,7 @@ using namespace std::chrono_literals;
 namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 /** gives a source location for printing.  Used for debugging. */
 std::string source_loc();           // 3 forward declaration, needed?
-extern void stacktrace_register();
+//extern void stacktrace_register();
 void crash_signals_register();
 
 std::string

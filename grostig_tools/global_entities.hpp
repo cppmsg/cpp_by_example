@@ -157,6 +157,6 @@ operator<<( std::ostream & out, SC const & sc) { LOGGER_()
 
 namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 std::string source_loc();           // forward declaration
-extern void stacktrace_register();
+//void stacktrace_register();
 void crash_signals_register();
 } // End Namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN

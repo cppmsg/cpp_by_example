@@ -46,7 +46,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 //#include<dlib/numeric_constants.h>
-#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
+//#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
 //#include <bits/stdc++.h>
 #include <bit>
 #include <bitset>
