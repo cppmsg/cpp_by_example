@@ -22,16 +22,12 @@ LIBS += \                               # https://gcc.gnu.org/onlinedocs/gcc-13.
 
 HEADERS +=                          \
     global_entities.hpp             \
-    dual_bindage_component.hpp      \
+    internal_linkage_component.hpp  \
     external_linkage_component.hpp  \
    #ut.hpp                          \
    #$$PWD/..h                       \   # probably wrong
-    internal_linkage_component.hpp  \
-    no_linkage_component.hpp        \
 
 SOURCES +=                          \
-    dual_bindage_component.cpp      \
     external_linkage_component.cpp  \
     internal_linkage_component.cpp  \
-    no_linkage_component.cpp        \
     main.cpp                        \  # we add SOURCES others below.

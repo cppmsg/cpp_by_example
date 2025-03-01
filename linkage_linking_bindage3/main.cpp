@@ -36,14 +36,9 @@
     #define GR_DEBUG
     #ifdef GR_DEBUG
     #endif GR_DEBUG
-
-https://gemini.google.com/app/4a09e4a21151ad27
  */
 
-#include "dual_bindage_component.hpp"
-#include "external_linkage_component.hpp"
-#include "internal_linkage_component.hpp"   // For Internal Linkage - Typically should be compiled separately
-#include "no_linkage_component.hpp"         // For No Linkage - Usually header for namespaces, but for single file demo OK
+#include "linkage_bindage.hpp" // #include "linkage_bindage_demo.h"
 
 #include "global_entities.hpp"
 #include "boost_headers.hpp"
@@ -55,6 +50,7 @@ https://gemini.google.com/app/4a09e4a21151ad27
 //#include<dlib/numeric_constants.h>
 //#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
 //#include <bits/stdc++.h>
+
 #include <bit>
 #include <bitset>
 #include <cassert>
@@ -71,49 +67,89 @@ https://gemini.google.com/app/4a09e4a21151ad27
 using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // using namespace std;
 using namespace std::string_literals;
 using namespace std::chrono_literals;
-using namespace ExternalComponent;
-using namespace DualBindage;
-using namespace NoLinkageExample;
-using namespace InternalComponent;
-
 namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 int main(int argc, char const * arv[]) { string my_arv{*arv}; cout << "$$ ~~~ argc, argv:"<<argc<<","<<my_arv<<"."<<endl; cin.exceptions( std::istream::failbit); Detail::crash_signals_register();
-    //Example1::test1 ();
+    // Example1::test1 ();
+    // https://claude.ai/chat/d05396ba-05a2-44ab-8bda-0d8df3455558
 
-    // https://gemini.google.com/app/4a09e4a21151ad27
-    cout << "\nERROR --- Internal Linkage and Internal Bindage ---" << endl;
-    //InternalComponent::callInternalStuff(); // Calling externally linked function within InternalComponent that uses internal stuff
-    // Attempting to access internalFunction() directly from main would cause a compile error - Internal Linkage
-    // Attempting to access internalVariable directly from main would also cause a compile error - Internal Linkage
-    // InternalType internalTypeInstance; // Creating instance of InternalType would be possible if you include the cpp, but conceptually not how internal linkage is used. Best if usage is contained.
+    std::cout <<
+"\n=== NO LINKAGE EXAMPLES ===" << std::endl;
+    demonstrate_no_linkage();
 
-    cout << "\nERROR --- No Linkage ---" << endl;
-    //NoLinkageExample::demonstrateNoLinkage();
+    std::cout <<
+"\n=== INTERNAL LINKAGE/bindage? EXAMPLES ===" << std::endl;
 
-    cout << "\n--- External Linkage and External Bindage ---" << endl;
-    externalFunction(); // Calling external function (External Linkage)
-    cout << "Accessing external variable from main: " << externalVariable << endl; // Accessing external variable (External Linkage)
-    ExternalType externalTypeInstance; // Creating instance of ExternalType (External Bindage)
-    externalTypeInstance.doExternalWork();
+    std::cout << "Variable in unnamed namespace (internal linkage): "
+              << unnamed_namespace_var << std::endl;
 
-    cout << "\n--- Dual Bindage ---" << endl;
-    std::unique_ptr<Shape> circle = createShape("circle");
-    if (circle) {
-        cout << circle->draw() << endl; // Runtime polymorphism - Dual Bindage in action: Interface is fixed (Shape), implementation is chosen at runtime.
-    }
-    std::unique_ptr<Shape> square = createShape("square");
-    if (square) {
-        cout << square->draw() << endl; // Runtime polymorphism again
-    }
+    unnamed_namespace_function();
 
-    cout << "\n--- Summary ---" << endl;
-    cout << "Linkage controls the visibility of names across compilation units (External, Internal, No)." << endl;
-    cout << "Bindage (as interpreted here in Lakos context) relates to how types and their implementations are bound or determined:" << endl;
-    cout << "  - External Bindage: Types defined in headers, representation known at compile time across units." << endl;
-    cout << "  - Internal Bindage: Types whose detailed implementation might be hidden or more tightly bound within a compilation unit (illustrated here conceptually with types defined in .cpp)." << endl;
-    cout << "  - Dual Bindage:  Types involving interfaces and implementations where the interface is fixed (external bindage), but the concrete implementation is chosen or resolved at runtime (e.g., via polymorphism)." << endl;
+    std::cout << "Static global variable (internal linkage): "
+              << global_static_var_IntLinkXX_IntBind << std::endl;
+
+    std::cout << "Constexpr with internal linkage and bindage: "
+              << global_static_constexpr_var_XX_IntBind << std::endl;
+
+    std::cout <<
+"\n=== EXTERNAL LINKAGE/bindage? EXAMPLES ===" << std::endl;
+    std::cout << "External variable (external linkage, external bindage): "
+              << global_extern_var_ExtLink_ExtBindXX << std::endl;
+    global_fn_ExtLink();
+
+    ClassDefn_ExtLink_IntBindXX example;
+    example.fn_ExtLink_XX();
+    std::cout << "Static class member (external linkage): "
+              << ClassDefn_ExtLink_IntBindXX::static_data_member_ExtLink_XX << std::endl;
+
+    global_inline_fn_ExtLink_IntBindXX();
+
+    std::cout << "External const (external linkage, external bindage): "
+              << global_const_bindage_ExtLink_ExtBind << std::endl;
+
+    std::cout << "Constexpr with external linkage, dual bindage: "
+              << global_inline_constexpr_var_ExtLink_DualBind << std::endl;
+
+    global_template_fn_ExtLink_IntBindXX<int>(42);
+
     cout << "###" << endl;
     return EXIT_SUCCESS;
 }
+/*
+https://claude.ai/chat/d05396ba-05a2-44ab-8bda-0d8df3455558
+
+This program demonstrates the three types of linkage (no linkage, internal linkage, and external linkage) and the three types of bindage (internal bindage, external bindage, and dual bindage) in modern C++.
+
+## Key Concepts Illustrated:
+
+### Linkage Types:
+1. **No Linkage**: Variables that can only be referred to from their declaration scope
+- Local variables, function parameters, block-scoped variables
+
+2. **Internal Linkage**: Names that can be referred to from multiple scopes within a single translation unit
+- Variables/functions in unnamed namespaces
+- Static variables at namespace scope
+- `constexpr` variables (typically)
+
+3. **External Linkage**: Names that can be referred to from different translation units
+- Regular namespace-scope declarations
+- Functions without `static`
+- Class definitions and their members
+
+### Bindage Types (Physical Linkage):
+1. **Internal Bindage**: Entity is bound separately in each translation unit
+- Inline functions
+- Template functions
+- `constexpr` variables when not exported
+
+2. **External Bindage**: Entity is bound once at program level
+- Regular global variables
+- Non-inline functions
+- Static class members
+
+3. **Dual Bindage**: Entity can function with either internal or external bindage
+- `inline constexpr` variables
+- Some header-only designs that work with both models
+
+*/
