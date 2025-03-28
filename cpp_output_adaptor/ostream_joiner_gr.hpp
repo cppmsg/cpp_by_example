@@ -70,7 +70,8 @@ public:
 
 template <class DelimT, class CharT = char, class Traits = std::char_traits<CharT>>
 auto make_ostream_joiner(
-    std::basic_ostream<CharT, Traits> &os, DelimT &&delimiter) -> ostream_joiner<std::decay_t<DelimT>, CharT, Traits> {
+    std::basic_ostream<CharT, Traits> &os, DelimT &&delimiter)
+    -> ostream_joiner<std::decay_t<DelimT>, CharT, Traits> {
     return { os, delimiter };
 };
 }

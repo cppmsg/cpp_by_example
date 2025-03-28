@@ -15,8 +15,10 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <ostream>
 #include <source_location>
 #include <stacktrace>
+#include <tuple>
 #include <utility>
 
 //import vector;
@@ -32,7 +34,8 @@ template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 #define LOGGERX(  msg, x)using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<    "["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<".:{"<<x<<"}."    <<endl;cout.flush();cerr.flush();
 #define LOGGERXR( msg, x)using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<"\r\n["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<".:{"<<x<<"}.\r\n"<<endl;cout.flush();cerr.flush();
 
-// All code below is: version 0.6 of project: cpp_concept_print_container_operator_insert
+// All code below is: version 0.7 of project: cpp_concept_print_container_operator_insert
+
 /* OLDER simple STUFF
 // Another approach to print, from: Josuttis
 template <class T>
@@ -52,7 +55,6 @@ inline void PRINT_ELEMENTS (const T& coll, string optcstr="") {
         }
             return out;
         }
-*/
 
 template<typename First, typename Second, typename Third>  // this forward declaration is definitely required to compile
 std::ostream & operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple);
@@ -67,22 +69,7 @@ template<class First, class Second, class Third>   // Must precede Streamable
 std::ostream &
 operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple) {
  out << "TUPLE_MEMBERS["; out << std::get<0>(my_tuple) << "," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple); out << "]"; return out; }  //out << "\b\b\b>]"; out.width(); out << std::setw(0);
-
-template <typename ...Ts, std::size_t ...Indexs>  // ...Ts parameter pack
-void tuple_streamer_helper(std::ostream& os, const std::tuple<Ts...>& tup, const std::index_sequence<Indexs...>&) {
-    (
-        ( os << std::get<Indexs>(tup) << ',' )
-        , ...
-        );  // a fold expression ++17
-}
-
-//namespace junk {
-template <typename ...Ts> // MARC
-std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
-    tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
-    return os;
-}
-//}
+*/
 
 // TODO??: Can/Does anyone want to do this with compile time-recursion?
 //template <typename ...Ts> // MARC
@@ -90,6 +77,29 @@ std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // T
     //tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
     //return os;
 //}
+
+template <typename ...ElementTypes, std::size_t ...Indexs>  // ...ElementTypes is a parameter pack
+void tuple_comma_insertion_stream_helper(std::ostream& os, const std::tuple<ElementTypes...>& tup, const std::index_sequence<Indexs...>&) {
+    (
+        ( os << std::get<Indexs>(tup) << ',' )
+        , ...
+        );  // a fold expression ++17
+}
+
+//namespace junk {
+template <typename ...ElementTypes>
+std::ostream& operator<<(std::ostream& os, const std::tuple<ElementTypes...>& tup) {  // ElementTypes... is a parameter-pack-expansion
+    //const std::index_sequence<1,2,sizeof...(Ts)> is{std::make_index_sequence<sizeof...(Ts)>()};
+    //tuple_streamer_helper(os, tup, is);
+    //tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
+    if constexpr (sizeof...(ElementTypes)) {
+        os << "[";
+        tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(ElementTypes) - 1>());
+        os << std::get<sizeof...(ElementTypes) - 1>(tup);
+        os << "]";
+    } else { os << "Empty Tuple!"; }
+    return os;
+}
 
 template <class T>
 concept Streamable
@@ -121,7 +131,6 @@ operator<<( std::ostream & out, SC const & sc) { //LOGGER_()
         out << "[CONTAINTER IS EMPTY]";
     return out;
 }
-
 
 int main ( int argc, char* arv[] ) { string my_arv { *arv}; cout << "~~~ argc,argv:"<<argc<<","<<my_arv<<"."<<endl;
     using My_tuple3 = std::tuple<int,float,std::string>;
@@ -165,6 +174,17 @@ int main ( int argc, char* arv[] ) { string my_arv { *arv}; cout << "~~~ argc,ar
     //cout << "$$My v_fund_pair     :"<< v_fund_pair << endl;  // ERROR
     //cout << "$$My map2            :"<< my_map2 << endl;
     //cout << "$$My map             :"<< my_map << endl;
+
+    // *** Marc's tuple solution ***
+    //std::index_sequence<4> junk {};  // compile time is: template args, see cppref index_sequence
+    //cout << std::index_sequence<4>{} << endl;  // see cppref index_sequence
+    std::tuple<int, string, int> junk{};
+
+    std::cout << std::make_tuple(111) << std::endl;
+    std::cout << std::make_tuple("abc", 2222) << std::endl;
+    std::cout << std::make_tuple(33.33, "def", 333) << std::endl;
+    std::cout << std::make_tuple("four", 4.4, "ghi", 444) << std::endl;
+    std::cout << "$$empty:" << std::make_tuple() << std::endl;
 
     cout << "###" << endl;
     return EXIT_SUCCESS;
