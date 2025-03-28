@@ -54,7 +54,7 @@ int main() {
     int32_t int_value{0};
     for (int i{0}; i < 15; ++i)
     {
-        std::copy(biterator::bitset_iter{big_sink} + (i * 7), biterator::bitset_iter{big_sink} + ((i + 1) * 7), biterator::begin(int_value));
+        std::copy(biterator::bitset_iter{big_sink} + (i * 7), biterator::bitset_iter{big_sink} + ((i + 1) * 7), biterator::begin<int32_t,6,0>(int_value));
         std::cout << int_value << '(' << char(int_value) << ") ";
     }
 
