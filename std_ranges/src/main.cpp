@@ -6,9 +6,10 @@
 // https://vector-of-bool.github.io/2019/10/21/rngs-static-ovr.html
 
 //#include <bits/stdc++.h>
-#include <string>
+#include <algorithm>
 #include <iostream>
 #include <ranges>
+#include <string>
 
 #include <typeinfo>
 #include <cstdlib>
@@ -32,24 +33,29 @@ std::string demangle() noexcept {
 int main() {  // below code was playing around, so we can just delete it and forget it, or fix it.
     std::string my_string {"abc:hello:my:friend:"};
     //auto range_to_sv { [] (auto && my_range) { return std::string_view( my_range ); }};
-    auto range_to_sv { [] (auto  my_range) { return std::string_view( my_range ); }};
+    auto range_to_sv { [] (auto my_range) { return std::string_view{ my_range }; }};
+    //std::string_view returned = range_to_sv( "xxx");
 
-    // todo??: why don't commented lines work?
-    //auto returned = range_to_sv( "xxx");
-    //returned();
+    //std::ranges::for_each( auto j : split_view ) { }
+    for (const auto word : std::ranges::views::split(my_string, ':')) {
+        //cout << std::string_view{word} << "," << endl;
+        cout << std::string{word.begin(),word.end()} << "," << endl;
+    }
 
     //auto split_view { my_string.std::views::split(':') };
+    auto split_view      { my_string | std::views::split(':') };
 
-    //auto split_view      { my_string | std::views::split(':') };
-    //auto drop_view       { split_view | std::views::drop('1') };
-    //auto transform_view  { drop_view | std::views::transform( range_to_sv ) };
-    //auto join_view       { transform_view | std::views::join };
-    //std::ranges::for_each( join_view, [&](const auto& item){ cout << item; });
-    //cout <<">>"<< *( join_view.begin() ) << endl;
-    //cout <<">>"<< *( ++(join_view.begin()) ) << endl;
-    //cout << join_view << endl;
+    // for ( auto i: split_view ) { for ( auto j: i ) { cout << j << "," << endl; } }
+    auto drop_view       { split_view | std::views::drop('1') };
+    auto transform_view  { drop_view | std::views::transform( range_to_sv ) };
+    auto join_view       { transform_view | std::views::join };
+    std::ranges::for_each( join_view, [&](const auto& item){ cout << item; });
+    cout <<">>"<< *( join_view.begin() ) << endl;
+    cout <<">>"<< *( ++(join_view.begin()) ) << endl;
+    // cout << join_view << endl;
 
-    auto range_transform_string {
+    /*
+       auto range_transform_string {
         my_string
         | std::views::split(':')
         | std::views::drop(1)
@@ -63,10 +69,10 @@ int main() {  // below code was playing around, so we can just delete it and for
     [[maybe_unused]] int i;
     //cout << "int demangled:"       << demangle(i) << endl;
     //cout << "int demangled:"       << demangle(my_string) << endl;
-
     std::ranges::for_each( range_transform_string, [](const auto& single_character){ cout << single_character; });
-    cout << endl;
+    */
 
+    cout << endl;
     cout << "###" << endl;
     return 0;
 }

@@ -68,6 +68,29 @@ std::ostream &
 operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple) {
  out << "TUPLE_MEMBERS["; out << std::get<0>(my_tuple) << "," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple); out << "]"; return out; }  //out << "\b\b\b>]"; out.width(); out << std::setw(0);
 
+template <typename ...Ts, std::size_t ...Indexs>  // ...Ts parameter pack
+void tuple_streamer_helper(std::ostream& os, const std::tuple<Ts...>& tup, const std::index_sequence<Indexs...>&) {
+    (
+        ( os << std::get<Indexs>(tup) << ',' )
+        , ...
+        );  // a fold expression ++17
+}
+
+//namespace junk {
+template <typename ...Ts> // MARC
+std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
+    tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
+    return os;
+}
+//}
+
+// TODO??: Can/Does anyone want to do this with compile time-recursion?
+//template <typename ...Ts> // MARC
+//std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
+    //tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
+    //return os;
+//}
+
 template <class T>
 concept Streamable
     = requires( std::ostream & out_concept_parameter ) {
@@ -85,7 +108,7 @@ concept Streamable_container
 
 template<Streamable_container SC>    // Function Template with typename concept being restricted to SC in this case. Similar to Value template
 std::ostream &
-operator<<( std::ostream & out, SC const & sc) { LOGGER_()
+operator<<( std::ostream & out, SC const & sc) { //LOGGER_()
     if ( not sc.empty() ) {
         out << "[";                    //out.width(9);  // TODO??: neither work, only space out first element. //out << std::setw(9);  // TODO??: neither work, only space out first element.
         // TODO??: why compile error on?: std::copy(sc.begin(), sc.end(), std::ostream_iterator< typename SC::value_type >( out, ">,<" ));
@@ -101,31 +124,47 @@ operator<<( std::ostream & out, SC const & sc) { LOGGER_()
 
 
 int main ( int argc, char* arv[] ) { string my_arv { *arv}; cout << "~~~ argc,argv:"<<argc<<","<<my_arv<<"."<<endl;
-    using My_tuple = std::tuple<int,float,std::string>;
+    using My_tuple3 = std::tuple<int,float,std::string>;
+    using My_tuple4 = std::tuple<int,float,std::string,std::string>;
     std::pair<int,float>                my_fundamental_pair {2, 3.3f};
-    My_tuple                            my_tuple            {2, 3.3f, "threethreethree"s};
-    std::map<int, My_tuple>::value_type my_value_type       {};
-    std::pair                           my_tuple_pair       {my_tuple,my_tuple};
+    My_tuple3                           my_tuple3           {2, 3.3f, "threethreethree"s};
+    My_tuple4                           my_tuple4           {2, 3.3f, "threethreethree"s, "four"s};
+    std::map<int, My_tuple3>::value_type my_value_type       {};
+    std::pair                           my_tuple_pair       {my_tuple3,my_tuple3};
     std::vector                         v_int               {1,2,3};
     std::vector                         v_cstring           {"one","two","three"};
     std::vector                         v_string            {"one"s,"two"s,"three"s};
     std::vector                         v_fund_pair         {my_fundamental_pair,my_fundamental_pair,my_fundamental_pair};
-    std::vector                         v_tuple             {my_tuple,my_tuple,my_tuple};
+    std::vector                         v_tuple             {my_tuple3,my_tuple3,my_tuple3};
     std::vector                         v_value_type        {my_value_type, my_value_type, my_value_type};
-    std::map<int, My_tuple>             my_map              { {10,my_tuple} };
-    std::map<int, My_tuple>             my_map2             { { 10,{11,12.0f,"1st string"s}}, {20,{21,22.0f,"2nd string"s}} };
+    std::map<int, My_tuple3>             my_map             { {10,my_tuple3} };
+    std::map<int, My_tuple3>             my_map2            { { 10,{11,12.0f,"1st string"s}}, {20,{21,22.0f,"2nd string"s}} };
 
-    cout << "$$My value_type      :"<< my_value_type << endl;
-    cout << "$$My v_value_type    :"<< v_value_type << endl;
-    cout << "$$My fundamental pair:"<< my_fundamental_pair << endl;        //cout << my_pair.first <<", " << my_pair.second << endl;
-    cout << "$$My tuple           :"<< my_tuple << endl;                             //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
-    cout << "$$My tuple pair      :"<< my_tuple_pair << endl;
-    cout << "$$My v_int           :"<< v_int << endl;
-    cout << "$$My v_cstring       :"<< v_cstring << endl;
-    cout << "$$My v_string        :"<< v_string << endl;
-    cout << "$$My v_fund_pair     :"<< v_fund_pair << endl;  // ERROR
-    cout << "$$My map2            :"<< my_map2 << endl;
-    cout << "$$My map             :"<< my_map << endl;
+    //cout << "$$My value_type      :"<< my_value_type << endl;
+    //cout << "$$My v_value_type    :"<< v_value_type << endl;
+    //cout << "$$My fundamental pair:"<< my_fundamental_pair << endl;        //cout << my_pair.first <<", " << my_pair.second << endl;
+    cout << "$$My tuple3          :"<< my_tuple3 << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+
+    //cout << "$$My tuple4          :" << my_tuple4 << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+    //cout << "$$My tuple4          :" << my_tuple4 << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+
+    cout << "$$My tuple4          :" << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+    //junk::operator<<(cout, my_tuple4);
+    // operator<<( cout, my_tuple4);
+    operator<<( operator<<(cout, my_tuple4 ), "gggggg\n");
+
+    cout << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+
+    //cout << "$$My tuple           :" << junk::operator<<(cout, my_tuple4) << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+    //cout << "$$My tuple           :" << operator<<(cout, my_tuple4) << endl;                  //cout << std::get<0>(my_tuple) <<"," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple) << endl;
+
+    //cout << "$$My tuple pair      :"<< my_tuple_pair << endl;
+    //cout << "$$My v_int           :"<< v_int << endl;
+    //cout << "$$My v_cstring       :"<< v_cstring << endl;
+    //cout << "$$My v_string        :"<< v_string << endl;
+    //cout << "$$My v_fund_pair     :"<< v_fund_pair << endl;  // ERROR
+    //cout << "$$My map2            :"<< my_map2 << endl;
+    //cout << "$$My map             :"<< my_map << endl;
 
     cout << "###" << endl;
     return EXIT_SUCCESS;

@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-CONFIG += c++latest
+#CONFIG += c++latest
 #CONFIG += c++20
 CONFIG += warn_on
 # ??CONFIG += QMAKE_CFLAGS_WARN_ON
@@ -10,7 +10,8 @@ CONFIG += warn_on
 
 QMAKE_CXXFLAGS += \
 # 2b could be wrong:
-        -std=gnu++23 		\
+       #-std=gnu++26 		\
+        -std=c++26 		\
         -g3 		        \
         -O0 		        \
 #        -Wno-comment 		\
@@ -21,7 +22,7 @@ QMAKE_CXXFLAGS += \
 LIBS += \
         -lpthread 		\
         -lrt 			\
-        -lstdc++_libbacktrace 	\
+       #-lstdc++_libbacktrace 	\
         -L /home/grostig/libs/lib \
 
 #INCLUDEPATH +=../../cereal/include/
