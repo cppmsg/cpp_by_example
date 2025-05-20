@@ -91,6 +91,7 @@ static_assert(CHAR_MIN < 0, "Char is signed.");
 
 #pragma message("$$ Twos Complement integer math most common, and C++ standard required since C++20.")
 
+// TODO??: Some NULL ideas to improve C++ uses TODO??: are these relevant or usefull, consider incorporating them into grostig_tools.
 using Ostring       = std::optional<std::string>;
 using Ochar         = std::optional<char>;
 using Ointegral     = std::optional<long>;
