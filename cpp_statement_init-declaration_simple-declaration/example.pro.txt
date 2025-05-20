@@ -1,8 +1,8 @@
 # Copyright (c) Grant Rostig, grantrostig.com, Boost 1.0 license
-# LONG version versus BRIEF
+
 # Either these three or the next 2, for app or lib, respectively.
- TEMPLATE = app                 # comment out these 3,
  SOURCES  = main.cpp           # we add SOURCES others below.
+ TEMPLATE = app                 # comment out these 3,
  CONFIG +=  console
 #TEMPLATE = lib                 # OR comment out these 2.
 #CONFIG +=  staticlib
@@ -33,13 +33,13 @@
 #QMAKE_CXX = clang++
 
 QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/
-    -fconcepts                  \
+   #-fconcepts                  \
    #-funsigned-char             \
    #-fmodules-ts                \
    #-fsanitize=undefined        \       # 60K link errors possible \
                                 \
-    -std=c++26		            \
-   #-std=c++23		            \
+   #-std=c++26		            \
+    -std=c++23		            \
    #-std=gnu++23		        \
     -g3 		                \
     -O0 		                \
@@ -94,21 +94,21 @@ LIBS += \                               # https://gcc.gnu.org/onlinedocs/gcc-13.
    #--verbose                   \
                                 \
 # DOCUMENTATION: gcc libstdc++ Table 3.1. C++ Command Options
-   #-std=c++98 or -std=c++03 	    Use the 1998 ISO C++ standard plus amendments.
+   #-std=c++98 or -std=c++03 	Use the 1998 ISO C++ standard plus amendments.
    #-std=gnu++98 or -std=gnu++03 	As directly above, with GNU extensions.
-   #-std=c++11	                    Use the 2011 ISO C++ standard.
-   #-std=gnu++11	                As directly above, with GNU extensions.
-   #-std=c++14	                    Use the 2014 ISO C++ standard.
-   #-std=gnu++14	                As directly above, with GNU extensions.
-   #-fno-exceptions 	            See exception-free dialect
-   #-fno-rtti 	                    As above, but RTTI-free dialect.
-   #-pthread	                    For ISO C++11 <thread>, <future>, <mutex>, or <condition_variable>.
-   #-latomic	                    Linking to libatomic is required for some uses of ISO C++11 <atomic>.
-   #-lstdc++exp	                    Linking to libstdc++exp.a is required for use of experimental C++ library features. This currently provides support for the C++23 types defined in the <stacktrace> header, the Filesystem library extensions defined in the <experimental/filesystem> header, and the Contracts extensions enabled by -fcontracts.
-   #-lstdc++fs	                    Linking to libstdc++fs.a is another way to use the Filesystem library extensions defined in the <experimental/filesystem> header. The libstdc++exp.a library also provides all the symbols contained in this library.
-   #-fopenmp	                    For parallel mode.
-   #-ltbb	                        Linking to tbb (Thread Building Blocks) is required for use of the Parallel Standard Algorithms and execution policies in <execution>.
-   #-ffreestanding	                Limits the library to its freestanding subset. Headers that are not supported in freestanding will emit a "This header is not available in freestanding mode" error. Headers that are in the freestanding subset partially will not expose functionality that is not part of the freestanding subset.
+   #-std=c++11	Use the 2011 ISO C++ standard.
+   #-std=gnu++11	As directly above, with GNU extensions.
+   #-std=c++14	Use the 2014 ISO C++ standard.
+   #-std=gnu++14	As directly above, with GNU extensions.
+   #-fno-exceptions 	See exception-free dialect
+   #-fno-rtti 	As above, but RTTI-free dialect.
+   #-pthread	For ISO C++11 <thread>, <future>, <mutex>, or <condition_variable>.
+   #-latomic	Linking to libatomic is required for some uses of ISO C++11 <atomic>.
+   #-lstdc++exp	Linking to libstdc++exp.a is required for use of experimental C++ library features. This currently provides support for the C++23 types defined in the <stacktrace> header, the Filesystem library extensions defined in the <experimental/filesystem> header, and the Contracts extensions enabled by -fcontracts.
+   #-lstdc++fs	Linking to libstdc++fs.a is another way to use the Filesystem library extensions defined in the <experimental/filesystem> header. The libstdc++exp.a library also provides all the symbols contained in this library.
+   #-fopenmp	For parallel mode.
+   #-ltbb	Linking to tbb (Thread Building Blocks) is required for use of the Parallel Standard Algorithms and execution policies in <execution>.
+   #-ffreestanding	Limits the library to its freestanding subset. Headers that are not supported in freestanding will emit a "This header is not available in freestanding mode" error. Headers that are in the freestanding subset partially will not expose functionality that is not part of the freestanding subset.
 
 #INCLUDEPATH += $$PWD/../lib_tty
 #INCLUDEPATH += $$PWD/.
@@ -119,65 +119,24 @@ LIBS += \                               # https://gcc.gnu.org/onlinedocs/gcc-13.
 #}
 
 HEADERS +=                      \
+    boost_headers.hpp           \
+    catch_amalgamated.hpp       \
+    cpp_headers.hpp             \
     global_entities.hpp         \
+    gnuplot-iostream.hpp        \
+    math_grostig.hpp            \
+    ostream_joiner_gr.hpp       \
+    random_toolkit.hpp          \
     ut.hpp                      \
    #$$PWD/..h                   \   # probably wrong
 
 SOURCES +=                      \
-   # NOT HERE main.cpp          \   # declared above for app, and not declared above for lib.  Therefore do NOT declare it here in either case.
+    #NOT HERE main.cpp          \   # declared above for app, and not declared above for lib.  Therefore do NOT declare it here in either case.
     global_entities.cpp         \
-
-HEADERS +=                      \
-   #boost_headers.hpp           \
-   #catch_amalgamated.hpp       \
-   #cpp_headers.hpp             \
-   #gnuplot-iostream.hpp        \
-   #iostreams.hpp               \
-   #math_grostig.hpp            \
-   #ostream_joiner_gr.hpp       \
-   #random_toolkit.hpp          \
-   #ut.cppm                     \
-
-SOURCES += \
-   #boost_headers.cpp           \
-   #catch_amalgamated.cpp       \
-   #cpp_headers.cpp             \
-   #gnuplot-iostream.cpp        \
-   #iostreams.cpp               \
-   #math_grostig.cpp            \
-   #ostream_joiner_gr.cpp       \
-   #random_toolkit.cpp          \
-   #ut.cppm                     \
-
-DISTFILES += \
-    CMakeLists.grostig.txt      \
-    Makefile.txt                \
-    README.txt                  \
-    example.pro.txt             \
-    clang-format_grostig_qt.xml \
-    grostig_tools_LONG.pro.txt  \
-    grostig_tools_BRIEF.pro.txt \
-
-DISTFILES += \
-    boost_headers.hpp.txt       \
-    boost_headers.cpp.txt       \
-    catch_amalgamated.hpp.txt   \
-    catch_amalgamated.cpp.txt   \
-    cpp_headers.hpp.txt         \
-    cpp_headers.cpp.txt         \
-    gnuplot-iostream.hpp.txt    \
-    gnuplot-iostream.cpp.txt    \
-    iostreams.hpp.txt           \
-    iostreams.cpp.txt           \
-    math_grostig.hpp.txt        \
-    math_grostig.cpp.txt        \
-    ostream_joiner_gr.hpp.txt   \
-    ostream_joiner_gr.cpp.txt   \
-    random_toolkit.hpp.txt      \
-    random_toolkit.cpp.txt      \
-    ut.hpp.txt                  \
-    ut.cppm.txt                  \
-
+    iostreams.cpp               \
+    math_grostig.cpp            \
+    ostream_joiner_gr.cpp       \
+    random_toolkit.cpp          \
 
 ####################################################
 

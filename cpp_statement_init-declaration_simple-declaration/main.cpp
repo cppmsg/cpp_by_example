@@ -48,7 +48,6 @@
 //#include<dlib/numeric_constants.h>
 //#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
 //#include <bits/stdc++.h>
-
 #include <bit>
 #include <bitset>
 #include <cassert>
@@ -63,7 +62,7 @@
 #include <stacktrace>
 #include <vector>
 
-using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; // using namespace std;
+using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // using namespace std;
 using namespace std::string_literals;
 using namespace std::chrono_literals;
 
@@ -73,17 +72,43 @@ namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 int main(int argc, char const * arv[]) {
     string my_arv{*arv}; cout << "$$ ~~~ argc, argv:"<<argc<<","<<my_arv<<"."<<endl;
     cin.exceptions( std::istream::failbit);
-    Detail::crash_signals_register();
-
-    std::string                 STRING_QQQ          {"qqq"};
-    std::vector<char>           QQQ                 {STRING_QQQ.begin(),STRING_QQQ.end()};
-
-    LOGGER_("testing LOGGER_");
-    LOGGERX("testing LOGGER_",QQQ);
-    cout << QQQ << endl;
-    cout << STRING_QQQ << endl;
-    cout << "###" << endl;
-
     //Example1::test1 ();
+
+    if (struct {string a; int b;} my_vars {"ABC", 9}; my_vars.b > 100 ) {
+        cout << "my_vars:"  << my_vars.a <<","<< my_vars.b << endl;
+    }
+    else if (true) {
+        cout << "else:" << my_vars.a << endl;
+    }
+
+    switch (struct {string a; int b;} my_vars{"switch", 9}; my_vars.b ) {
+    case 1:
+        cout << "my_vars.b:" << my_vars.b << "," << my_vars.b << endl;
+        break;
+    default:
+        cout << "default:" << my_vars.a << endl;
+        break;
+    }
+
+    struct TMP {string a; int b;};
+    TMP    my_vars{"ABC", 9};
+    struct {string a; int b;} my_vars2{"ABC", 9};
+    int    my_vars3{9};
+    //while (TMP my_vars{"ABC",0}; my_vars.b++ > 12) {
+    //while (my_vars.b++ > 12) {
+    //while (int my_vars2{0}; my_vars > 12) {
+    //while (int my_vars2=0; my_vars2 > 12)
+    {
+        //cout << "my_vars:" << my_vars.a << "," << my_vars.b << endl;
+        //cout << "my_vars:" << my_vars.b << endl;
+        cout << "my_vars:" << my_vars3 << endl;
+    }
+
+    //do
+    {
+        cout << "my_vars:" << my_vars.a << "," << my_vars.b << endl;
+    } //while (int my_vars.b=0; my_vars.b > 12);
+
+    cout << "###" << endl;
     return EXIT_SUCCESS;
 }

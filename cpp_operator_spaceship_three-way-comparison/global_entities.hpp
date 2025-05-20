@@ -109,97 +109,20 @@ inline constexpr std::string    STRING_NULL{"NULL"};    // Value is unset/not-se
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 
-// All code below is: version 0.7 of project: cpp_concept_print_container_operator_insert
-
-/* OLDER simple STUFF
-// Another approach to print, from: Josuttis
-template <class T>
-inline void PRINT_ELEMENTS (const T& coll, string optcstr="") {
-    typename T::const_iterator pos;
-    std::cout << optcstr;
-    for (pos=coll.begin(); pos!=coll.end(); ++pos)
-        std::cout << *pos << ' ';
-    std::cout << std::endl;
-}
-// Prints contents of a container such as a vector of int's.
-// Insertable Concept used by Templated Function definition.
-// Older version is here for the record:
-        template<class T> std::ostream & operator<<(std::ostream & out, std::vector<T> const & v) { // utility f() to print vectors
-        if ( not v.empty() ) {
-            out<<'['; std::copy(v.begin(), v.end(), std::ostream_iterator<T>(out, ", ")); out<<"\b\b]";
-        }
-            return out;
-        }
-
+// **** Version 0.6 of project: cpp_concept_print_container_operator_insert
 template<typename First, typename Second, typename Third>  // this forward declaration is definitely required to compile
 std::ostream & operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple);
 
 template<class First, class Second>  // Must precede Streamable
 std::ostream &
 operator<<( std::ostream & out, std::pair<First,Second> const & my_pair) {
- out << "PAIR_MEMBERS["; out << my_pair.first  <<","<< my_pair.second; out << "]"; return out; }
+    out << "PAIR_MEMBERS["; out << my_pair.first  <<","<< my_pair.second; out << "]"; return out; }
 
 template<class First, class Second, class Third>   // Must precede Streamable
- // TODO??: make it variadic. TODO??: what about something like this: std::copy(my_pair.begin(), my_pair.end(), std::ostream_iterator< typename Container::value_type >( out, ">,<" ));
+                                                  // TODO??: make it variadic. TODO??: what about something like this: std::copy(my_pair.begin(), my_pair.end(), std::ostream_iterator< typename Container::value_type >( out, ">,<" ));
 std::ostream &
 operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple) {
-out << "TUPLE_MEMBERS["; out << std::get<0>(my_tuple) << "," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple); out << "]"; return out; }  //out << "\b\b\b>]"; out.width(); out << std::setw(0);
-*/
-
-// TODO??: Can/Does anyone want to do this with compile time-recursion?
-//template <typename ...Ts> // MARC
-//std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
-//tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
-//return os;
-//}
-
-/* TODO??: need compile-time reflection, 26??
-template <typename ...ElementTypes, std::size_t ...Indexs>  // ...ElementTypes is a parameter pack
-void struct_comma_insertion_stream_helper(std::ostream& os, const std::tuple<ElementTypes...>& tup, const std::index_sequence<Indexs...>&) {
-    (
-        ( os << std::get<Indexs>(tup) << ',' )
-        , ...
-        );  // a compile time "right" fold expression ++17  // TODO??: is it unary or binary?
-}
-
-//namespace junk {
-template <typename StructElementTypes>
-std::ostream& operator<<(std::ostream& os, const StructElementTypes& strct) {  // ElementTypes... is a parameter-pack-expansion
- //const std::index_sequence<1,2,sizeof...(Ts)> is{std::make_index_sequence<sizeof...(Ts)>()};
- //tuple_streamer_helper(os, tup, is);
- //tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
- if constexpr (sizeof...(ElementTypes)) {  // int operatorsizeof...(); // non-overloadable.
-     os << "[";
-     tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(ElementTypes) - 1>());  // all but the last element
-     os << std::get<sizeof...(ElementTypes) - 1>(tup);  // last element
-     os << "]";
- } else { os << "Empty Tuple!"; }
- return os;
-}
-*/
-
-template <typename ...ElementTypes, std::size_t ...Indexs>  // ...ElementTypes is a parameter pack
-void tuple_comma_insertion_stream_helper(std::ostream& os, const std::tuple<ElementTypes...>& tup, const std::index_sequence<Indexs...>&) {
-    (
-        ( os << std::get<Indexs>(tup) << ',' )
-        , ...
-        );  // a compile time "right" fold expression ++17  // TODO??: is it unary or binary?
-}
-
-//namespace junk {
-template <typename ...ElementTypes>
-std::ostream& operator<<(std::ostream& os, const std::tuple<ElementTypes...>& tup) {  // ElementTypes... is a parameter-pack-expansion
-    //const std::index_sequence<1,2,sizeof...(Ts)> is{std::make_index_sequence<sizeof...(Ts)>()};
-    //tuple_streamer_helper(os, tup, is);
-    //tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
-    if constexpr (sizeof...(ElementTypes)) {  // int operatorsizeof...(); // non-overloadable.
-        os << "[";
-        tuple_comma_insertion_stream_helper(os, tup, std::make_index_sequence<sizeof...(ElementTypes) - 1>());  // all but the last element
-        os << std::get<sizeof...(ElementTypes) - 1>(tup);  // last element
-        os << "]";
-    } else { os << "Empty Tuple!"; }
-    return os;
-}
+    out << "TUPLE_MEMBERS["; out << std::get<0>(my_tuple) << "," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple); out << "]"; return out; }  //out << "\b\b\b>]"; out.width(); out << std::setw(0);
 
 template <class T>
 concept Streamable
@@ -218,7 +141,7 @@ concept Streamable_container
 
 template<Streamable_container SC>    // Function Template with typename concept being restricted to SC in this case. Similar to Value template
 std::ostream &
-operator<<( std::ostream & out, SC const & sc) { //LOGGER_()
+operator<<( std::ostream & out, SC const & sc) { LOGGER_()
     if ( not sc.empty() ) {
         out << "[";                    //out.width(9);  // TODO??: neither work, only space out first element. //out << std::setw(9);  // TODO??: neither work, only space out first element.
         // TODO??: why compile error on?: std::copy(sc.begin(), sc.end(), std::ostream_iterator< typename SC::value_type >( out, ">,<" ));

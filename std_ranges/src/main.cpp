@@ -42,26 +42,37 @@ int main() {  // below code was playing around, so we can just delete it and for
         cout << std::string{word.begin(),word.end()} << "," << endl;
     }
 
-    //auto split_view { my_string.std::views::split(':') };
-    auto split_view      { my_string | std::views::split(':') };
-
-    // for ( auto i: split_view ) { for ( auto j: i ) { cout << j << "," << endl; } }
-    auto drop_view       { split_view | std::views::drop('1') };
+    auto split_view      { my_string | std::ranges::views::split(':') };
+    //for ( auto i: split_view ) { for ( auto j: i ) { cout << j << "," << endl; } }; cout << endl;
+    auto drop_view       { split_view | std::views::drop(1) };
+    //for ( auto i: drop_view ) { for ( auto j: i ) { cout << j << "," << endl; } }; cout << endl;
     auto transform_view  { drop_view | std::views::transform( range_to_sv ) };
     auto join_view       { transform_view | std::views::join };
-    std::ranges::for_each( join_view, [&](const auto& item){ cout << item; });
+    std::ranges::for_each( join_view, [&](const auto& item){ cout << item; }); cout << endl;
+
     cout <<">>"<< *( join_view.begin() ) << endl;
     cout <<">>"<< *( ++(join_view.begin()) ) << endl;
     // cout << join_view << endl;
 
-    /*
-       auto range_transform_string {
+    auto range_transform_string {
         my_string
         | std::views::split(':')
         | std::views::drop(1)
         | std::views::transform( range_to_sv )
         | std::views::join
     };
+
+    auto range_transform_string_no_join {
+        my_string
+        | std::views::split(':')
+        | std::views::drop(1)
+        | std::views::transform( range_to_sv )
+    };
+
+    for ( auto i : range_transform_string_no_join ) {
+        cout << i << ",";
+    } cout << endl;
+
     cout << demangle( typeid( range_to_sv)) << endl;
     cout << demangle( typeid( range_transform_string)) << endl;
     cout << "my_string demangled:" << demangle( typeid(my_string) ) << endl;
@@ -70,7 +81,6 @@ int main() {  // below code was playing around, so we can just delete it and for
     //cout << "int demangled:"       << demangle(i) << endl;
     //cout << "int demangled:"       << demangle(my_string) << endl;
     std::ranges::for_each( range_transform_string, [](const auto& single_character){ cout << single_character; });
-    */
 
     cout << endl;
     cout << "###" << endl;

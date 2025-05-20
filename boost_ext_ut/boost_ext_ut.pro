@@ -28,7 +28,6 @@ TEMPLATE = app
 #QMAKE_CXX = clang++
 
 QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/
-        #-fconcepts             \
         #-funsigned-char         \
         \
         -std=c++26		    \

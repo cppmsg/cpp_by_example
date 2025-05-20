@@ -1,0 +1,76 @@
+/* Copyright (c) 2017 Grant Rostig. All rights reserved. License: Boost v1.0 */
+#include "global_entities.hpp"
+#include "iostreams.hpp"
+#include <cassert>
+#include <iostream>
+using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // using namespace std;
+using namespace std::string_literals;
+using namespace std::chrono_literals;
+
+/** There are two semantic EOFs:
+ *  1) eof_Key_char_singular is a "We probably don't handle eof well."); // todo: more eof handling needed
+            file_status = File_status::eof_file_desc logical eof intended by the user by typing in a CTL-D,
+ *  2) eof_file_descriptor occurs when a read() fails with that error.
+ *  But I'm unclear about the exact distinction between these two especially with regard to COOKED versus RAW on a tty.
+ *  todo: refactor these two out since I don't think we need a separate EOFs, since in tty raw mode we recognize ^D as a hot_key.
+ */
+enum class File_status { /// After reading a char, did we get something good, should we expect more?
+    initial_state,         /// initial state, should not remain this way after any tty read() or get().
+    other,                /// probably means got a good value.
+    unexpected_data,      /// got bad data from hardware error, or user error, ie. something we don't expect or support.
+    eof_Key_char_singular,/// got a character that can be interpreted as eof, ie. ^D in Unix, ^Z in DOS/Win?
+    eof_library,          /// get application library EOF.
+    eof_file_descriptor,  /// get library or OS EOF.
+    timed_out,            /// we read, but didn't get a value, or status.
+    fail,                 /// we read, but we got format/extraction error.
+    bad                   /// we read, but we got serious unrecoverable error.
+};
+
+bool is_ignore_key_file_status( File_status const file_status ) { // **** CASE on File Status
+    switch (file_status) {
+    case File_status::other : LOGGER_("File_status is: other"); //
+        return false;
+    case File_status::eof_Key_char_singular : LOGGER_("File_status is: keyboard eof, which is a hotkey"); //
+        return false;
+    case File_status::eof_library : LOGGER_("File_status is: keyboard eof, which is a hotkey"); //
+        return false;
+    case File_status::bad : LOGGER_("File_status is bad"); //
+        return false;
+    case File_status::fail : LOGGER_("File_status is bad"); //
+        return false;
+    case File_status::timed_out :
+        cout << "\ais_ignore_key_file_status: keyboard timeout, try again";
+        break;
+    case File_status::unexpected_data :
+        cout << "\ais_ignore_key_file_status: bad keyboard character sequence, try again"; // we throw away bad character sequence or char // todo: handle scrolling and dialog
+        break;
+    case File_status::eof_file_descriptor :
+        assert( false && "File descriptor is at eof.");  // todo: is this correct, or should we not ignore it?
+        break;
+    case File_status::initial_state :
+        assert( false && "File_status should be set by now.");  // todo: is this correct, or should we not ignore it?
+        break;
+    }
+    return true;  // we add back the input character that we have decided to ignore.
+}
+
+File_status
+get_iostate_cin() {
+    File_status file_status;
+    if ( cin.eof() ) {
+        file_status = File_status::eof_file_descriptor;
+    } else {
+        if ( cin.fail() ) {
+            file_status = File_status::fail;
+            assert( false && "cin is bad() how did that happen?  We don't handle it." );
+        } else {
+            if ( cin.bad() ) {
+                file_status = File_status::bad;
+                assert( false && "cin is bad() how did that happen?  We don't handle it." );
+            } else {
+                file_status = File_status::other;
+            }
+        }
+    }
+    return file_status;
+}

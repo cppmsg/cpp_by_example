@@ -71,5 +71,9 @@ LIBS += \
 #       $$PWD/..h               \ # probably wrong
 
 SOURCES += \
+    class_with_elements.cpp \
     main.cpp \
+
+HEADERS += \
+    class_with_elements.hpp
 
