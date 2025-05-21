@@ -38,11 +38,11 @@
     #endif GR_DEBUG
  */
 #pragma once
+//#include <bits/stdc++.h>
 //#include <boost/dynamic_bitset.hpp>
 //#include <boost/multiprecision/cpp_int.hpp>
 //#include <dlib/numeric_constants.h>
-//#include <bits/stdc++.h>
-//#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
+//#include <gsl/gsl>                                // sudo dnf install  guidelines-support-library-devel
 #include <bit>
 #include <bitset>
 #include <cassert>
@@ -52,26 +52,21 @@
 #include <csignal>
 #include <iostream>
 #include <iterator>
-#include <stacktrace>
+#include <map>
 #include <optional>
+#include <stacktrace>
 #include <source_location>
 #include <string>
 #include <stacktrace>
 #include <vector>
 
-using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // using namespace std;
-using namespace std::string_literals;
-using namespace std::chrono_literals;
-
-// SYMBOL    MEANING // for debugging purposes
-// TODO:    the principal programmer needs todo.
-// TODO?:	the principal programmer is not sure about something, that should be addressed.
-// TODO?:X  the X programmer is not sure about something, that should be addressed.
-// TODO??:  is a question for verbal discussion at CppMSG.com meetup meetings.
+using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // NOT using namespace std;
+using namespace std::string_literals;  // Doesn't cause harm?
+using namespace std::chrono_literals;  // Doesn't cause harm?
 
 //static_assert(std::endian::native != std::endian::little && std::endian::native != std::endian::big , "Memory is mixed endian.");
 static_assert(std::endian::native == std::endian::little, "Memory is big endian or mixed.");  // May or may not be relevant or required.
-#pragma message("$$ Memory is little endian not mixed, not big.")
+#pragma message("$$ Memory is little endian, not mixed, not big.")
 //static_assert(std::endian::native == std::endian::big,  "Memory is little endian or mixed.");
 
 // define   NDEBUG if asserts are NOT to be checked.  Put in *.h file not *.CPP
@@ -89,7 +84,7 @@ static_assert(CHAR_MIN < 0, "Char is signed.");
 #pragma message("$$ Char is unsigned.")
 #endif
 
-#pragma message("$$ Twos Complement integer math most common, and C++ standard required since C++20.")
+#pragma message("$$ Twos Complement integer math, most common, and C++ standard required since C++20.")
 
 // TODO??: Some NULL ideas to improve C++ uses TODO??: are these relevant or usefull, consider incorporating them into grostig_tools.
 using Ostring       = std::optional<std::string>;
@@ -102,17 +97,22 @@ inline constexpr signed char    SCHAR_NULL{SCHAR_MIN};       // Value is unset/n
 inline constexpr unsigned char  UCHAR_NULL{UCHAR_MAX};       // Value is unset/not-set, similar to how a SQL DB shows an unset field as NULL, which is different than zero length or some magic number.  Here we turn it into a magic number and hope for the best.
 inline constexpr std::string    STRING_NULL{"NULL"};    // Value is unset/not-set, similar to how a SQL DB shows an unset field as NULL, which is different than zero length or some magic number.  Here we turn it into a magic number and hope for the best.
 
- // Some crude logging that prints source location, where X prints a variable, and R adds \n\r (which is usefull when tty in in RAW or CBREAK mode. Requires C++20.
+// Some crude logging that prints source location, where X prints a variable, and R adds \n\r (which is usefull when tty in in RAW or CBREAK mode. Requires C++20.
 #define LOGGER_(  msg )  using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<    "["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<           "."    <<endl;cout.flush();cerr.flush();
 #define LOGGER_R( msg )  using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<"\r\n["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<           ".\r\n"<<endl;cout.flush();cerr.flush();
 #define LOGGERX(  msg, x)using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<    "["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<".:{"<<x<<"}."    <<endl;cout.flush();cerr.flush();
 #define LOGGERXR( msg, x)using loc = std::source_location;std::cout.flush();std::cerr.flush();std::cerr<<"\r\n["<<loc::current().file_name()<<':'<<std::setw(4)<<loc::current().line()<<','<<std::setw(3)<<loc::current().column()<<"]`"<<loc::current().function_name()<<"`:" <<#msg<<".:{"<<x<<"}.\r\n"<<endl;cout.flush();cerr.flush();
 
+namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+std::string source_loc();       // forward declaration  TODO??: Why did I do this? Remember this code is a library, but also runable by main.cpp for testing purposes.
+void crash_signals_register();  // forward declaration  TODO??: Why did I do this? Remember this code is a library, but also runable by main.cpp for testing purposes.
+} // End Namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 
-// All code below is: version 0.7 of project: cpp_concept_print_container_operator_insert
+// All code below is: version 0.7 copied from project: cpp_concept_print_container_operator_insert
 
-/* OLDER simple STUFF
+/* Older simpler stuff to print complex objects
 // Another approach to print, from: Josuttis
 template <class T>
 inline void PRINT_ELEMENTS (const T& coll, string optcstr="") {
@@ -147,12 +147,13 @@ operator<<( std::ostream & out, std::tuple<First,Second,Third> const & my_tuple)
 out << "TUPLE_MEMBERS["; out << std::get<0>(my_tuple) << "," << std::get<1>(my_tuple) << "," << std::get<2>(my_tuple); out << "]"; return out; }  //out << "\b\b\b>]"; out.width(); out << std::setw(0);
 */
 
-// TODO??: Can/Does anyone want to do this with compile time-recursion?
-//template <typename ...Ts> // MARC
-//std::ostream& operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
-//tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
-//return os;
-//}
+/* TODO??: Can/Does anyone want to do this with compile time-recursion?
+template <typename ...Ts> // MARC
+std::ostream&
+operator<<(std::ostream& os, const std::tuple<Ts...>& tup) {  // Ts... parameter-pack-expansion
+    tuple_streamer_helper(os, tup, std::make_index_sequence<sizeof...(Ts)>());
+    return os;
+} */
 
 /* TODO??: need compile-time reflection, 26??
 template <typename ...ElementTypes, std::size_t ...Indexs>  // ...ElementTypes is a parameter pack
@@ -232,9 +233,3 @@ operator<<( std::ostream & out, SC const & sc) { //LOGGER_()
         out << "[CONTAINTER IS EMPTY]";
     return out;
 }
-
-namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-std::string source_loc();           // forward declaration
-//void stacktrace_register();
-void crash_signals_register();
-} // End Namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
