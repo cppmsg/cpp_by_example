@@ -71,10 +71,9 @@ namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 namespace Example1 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
     void f1 () {
-        std::vector my_vec{1,2,3};  // If unchecked, may not get SIGSEGV at(3), or even much higher.
+        std::vector my_vec{1,2,3};  // If the index is unchecked, it may not get SIGSEGV at(3), or even much higher.
         for (unsigned int i=0; i<(std::numeric_limits<size_t>::max()-1); ++i) { // TODO??: Why does this give compile warning and all below don't.
-        //auto near_max{std::numeric_limits<size_t>::max()-1};
-        //for (unsigned int i=0; i<near_max; ++i) {
+        //auto near_max{std::numeric_limits<size_t>::max()-1}; for (unsigned int i=0; i<near_max; ++i) {
         //for (unsigned int i=0; i<(std::numeric_limits<unsigned int>::max()); ++i) {
         //for (size_t i=0; i<(std::numeric_limits<std::size_t>::max()); ++i) {
             cout << my_vec[i] <<",";
@@ -83,7 +82,7 @@ namespace Example1 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
     }
     void test1 () {
         int *p{nullptr};
-        *p = 42;  // Triggers SIGSEGV
+        *p = 42;        // Triggers SIGSEGV
     }
     void test2 () {
         f1();

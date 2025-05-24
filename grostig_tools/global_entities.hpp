@@ -64,14 +64,14 @@ using std::cin; using std::cout; using std::cerr; using std::clog; using std::en
 using namespace std::string_literals;  // Doesn't cause harm?
 using namespace std::chrono_literals;  // Doesn't cause harm?
 
+//static_assert(std::endian::native == std::endian::big,  "Memory is big endian or mixed.");
 //static_assert(std::endian::native != std::endian::little && std::endian::native != std::endian::big , "Memory is mixed endian.");
-static_assert(std::endian::native == std::endian::little, "Memory is big endian or mixed.");  // May or may not be relevant or required.
-#pragma message("$$ Memory is little endian, not mixed, not big.")
-//static_assert(std::endian::native == std::endian::big,  "Memory is little endian or mixed.");
+  static_assert(std::endian::native == std::endian::little, "Memory is big endian or mixed.");
+ #pragma message("$$ Memory is little endian, not mixed, not big.")
 
-// define   NDEBUG if asserts are NOT to be checked.  Put in *.h file not *.CPP
+// Define   NDEBUG if asserts are NOT to be checked.  Put in *.h file not *.CPP
 //#define 	NDEBUG
-// define   GR_DEBUG if we/programmer is Debugging.  Put in *.h file not *.CPP
+// Define   GR_DEBUG if we/programmer is Debugging.  Put in *.h file not *.CPP
 //#define  	GR_DEBUG
 //#ifdef   	GR_DEBUG
 //#endif    GR_DEBUG

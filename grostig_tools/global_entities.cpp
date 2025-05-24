@@ -12,7 +12,7 @@
 #include <cstring>  // only needed here, for strsignal().
 
 namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-std::map<int, std::string> signal_info = {  // Yes these some entries are overkill for current use, but a good reference.
+std::map<int, std::string> signal_info{  // Yes some of these entries are overkill for current use, but a good reference for linux.
     {SIGABRT, "SIGABRT"},
     {SIGALRM, "SIGALRM"},
     {SIGBUS, "SIGBUS"},
@@ -23,11 +23,11 @@ std::map<int, std::string> signal_info = {  // Yes these some entries are overki
     {SIGILL, "SIGILL"},
     {SIGINT, "SIGINT"},
     {SIGIO, "SIGIO"},
+    {SIGKILL, "SIGKILL"},
+    {SIGPIPE, "SIGPIPE"},
 #ifdef SIGPOLL
     {SIGPOLL, "SIGPOLL"},
 #endif
-    {SIGKILL, "SIGKILL"},
-    {SIGPIPE, "SIGPIPE"},
     {SIGPROF, "SIGPROF"},
     {SIGQUIT, "SIGQUIT"},
     {SIGSEGV, "SIGSEGV"},
@@ -47,10 +47,7 @@ std::map<int, std::string> signal_info = {  // Yes these some entries are overki
     {SIGXFSZ, "SIGXFSZ"}
 };
 
-/** gives a source location for printing.  Used for debugging. */
-std::string source_loc();               // Forward declaration, needed?
-void crash_signals_register();          // Forward declaration, needed?
-
+/// Gives a source location for printing.  Used for debugging.
 std::string
 source_loc() {
     using loc = std::source_location;
@@ -75,7 +72,7 @@ auto crash_tracer_SIGABRT(int signal_number) -> void {
     */
     //LOGGERX( "$$ We are getting out and that generated another signal, presumably ABRT, we got signal number", signal_number);
     //LOGGERX( "$$ IGNORE THIS ONE, just shown for understanding:", std::stacktrace::current());
-    LOGGER_( "$$ SIGABRT called by crash_tracer, or it occurred in code. Now we are at the very end of crash_tracer!");
+    LOGGER_( "$$ SIGABRT called by crash_tracer, or it occurred in code. Now we are at the very end of crash_tracer_SIGABRT!");
     return;  // TODO??: I think ABRT now, after this return it actually aborts and is done and overwith.
 }
 
@@ -121,24 +118,26 @@ auto crash_tracer(int signal_number) -> void {  // Note std::signal wants an int
         return;
     }
 }
-/** signals that cause "terminate" of a process and sometimes "core dump"  https://en.wikipedia.org/wiki/Signal_(IPC) */
+
+/// Enables printing of stack dump on crash.  Used for debugging. */
+/// signals that cause "terminate" of a process and sometimes "core dump"  https://en.wikipedia.org/wiki/Signal_(IPC)
 auto crash_signals_register() -> void {
 #ifdef SIGRTMIN  // Yes this is overkill for current use, but a good reference.
     for (int signal_number{SIGRTMIN}; signal_number <= SIGRTMAX; ++signal_number)
         signal_info[signal_number] = "SIGRT" + std::to_string(signal_number - SIGRTMIN);
 #endif
     std::signal( SIGABRT, crash_tracer_SIGABRT );  // We really needed special handling for this signal since we wanted to allow crash_tracer to abort()?  Don't remember.
-    std::signal( SIGBUS, crash_tracer );  // We really needed special handling for this signal since we wanted to allow crash_tracer to abort()?  Don't remember.
+    std::signal( SIGBUS,  crash_tracer );
     std::signal( SIGFPE,  crash_tracer );
     std::signal( SIGHUP,  crash_tracer );
     std::signal( SIGINT,  crash_tracer );
     std::signal( SIGILL,  crash_tracer );
-    //std::signal( SIGKILL,  crash_tracer );  // can't be caught?
+  //std::signal( SIGKILL, crash_tracer );  // can't be caught?
     std::signal( SIGQUIT, crash_tracer );
     std::signal( SIGSEGV, crash_tracer );
-    //std::signal( SIGSTOP, crash_tracer );  // can't be caught?
+  //std::signal( SIGSTOP, crash_tracer );  // can't be caught?
     std::signal( SIGSYS,  crash_tracer );
-    //std::signal( SIGTRAP, crash_tracer );  // usually a debugger or breakpoint
+  //std::signal( SIGTRAP, crash_tracer );  // usually a debugger or breakpoint
     std::signal( SIGXCPU, crash_tracer );
     std::signal( SIGXFSZ, crash_tracer );
 }
