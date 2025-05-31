@@ -256,51 +256,6 @@ void test1 () {
 }
 }
 
-namespace Example3 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-void input_thread_internal_f (std::stop_token const &st  ) {
-}
-
-void input_thread_f (std::stop_token const &my_stop_token, std::stop_source my_stop_source ) {
-    std::string my_string{};
-    cin >> my_string;
-    std::osyncstream(cout) << my_string <<"."<< endl;  // TODO??: Is there an isyncstream
-    if ( "q"s == my_string) {
-        my_stop_source.request_stop();
-    }
-}
-
-#define  MY_NUM        43;
-const            int a{43};
-constexpr        int b{43};
-//inline constexpr int c{43};
-
-// constexpr is a suggestion, need not be done by the compiler.
-//constexpr int f( int const i) {  // this const only promises to not change within.
-consteval int f( int const i) {  // this const only promises to not change within.
-    int const     a{i};
-    int constexpr b{2};  // known at compile at time and const.
-    std::array<int,b> my_array {2,3}; (void)my_array;
-    return i+99;
-}
-
-constexpr int g( int const i) {
-    int const     a{ f(i) };
-    int const     b{ f(2) };
-    int constinit b1{ f(2) };
-    int constexpr c{ f(2) };     // known at compile at time and const.
-    int constexpr d{ f(i) };
-    int const x    {33};
-    int constexpr e{ f( float {33} ) };
-    std::array<int,c> my_array {2,3}; (void)my_array;
-    return i+99;
-}
-
-void test1 () {
-    for ( int i{0}; i<5 ;++i)
-        f(i);
-}
-} // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-
 int main(int argc, char const * arv[]) {
     std::string my_arv{*arv}; cout << "$$ ~~~ argc, argv:"<<argc<<","<<my_arv<<"."<<endl;
     cin.exceptions( std::istream::failbit);
@@ -308,7 +263,6 @@ int main(int argc, char const * arv[]) {
 
     //Example1::test1 ();
     Example2::test1 ();
-    Example3::test1 ();
     cout << "###" << endl;
     return EXIT_SUCCESS;
 }

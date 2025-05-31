@@ -21,7 +21,7 @@ CONFIG += console
 #CONFIG += static wrong? why?
 #QMAKE_CXX = clang++
 QMAKE_CXXFLAGS += \
-        -std=c++23		    \
+        -std=c++26		    \
         #-std=gnu++23		    \
         -O0 		            \
         -g3 		            \
@@ -54,7 +54,7 @@ QMAKE_CXXFLAGS += \
 LIBS += \
         -lpthread               \
         -lrt                    \
-        -lstdc++_libbacktrace   \
+        #-lstdc++_libbacktrace   \
         #-lboost_system         \
         #-lboost_coroutine      \
         #-lssl                  \  #  missing this still: undefined reference to symbol 'd2i_PrivateKey_bio@@OPENSSL_1_1_0  related to: OPENSSL_API_COMPAT

@@ -59,7 +59,7 @@
 #include <string>
 #include <stacktrace>
 #include <vector>
-
+// NOTE: This file/library is NOT header only, so it has to be copied into each project that uses it.  TODO??: fix this
 using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; using std::string;  // NOT using namespace std;
 using namespace std::string_literals;  // Doesn't cause harm?
 using namespace std::chrono_literals;  // Doesn't cause harm?
