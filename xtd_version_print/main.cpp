@@ -37,10 +37,31 @@
     #ifdef GR_DEBUG
     #endif GR_DEBUG
  */
-#include "view_main_form.hpp"
-#include <xtd/forms/application>
+//#include "global_entities.hpp"
+//#include "boost_headers.hpp"
+//#include "cpp_headers.hpp"
+//#include "math_grostig.hpp"
+//#include "ostream_joiner_gr.hpp"
+//#include "random_toolkit.hpp"
+//#include <bits/stdc++.h>
+//#include <boost/dynamic_bitset.hpp>
+//#include <boost/multiprecision/cpp_int.hpp>
+//#include <dlib/numeric_constants.h>
+//#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
+#include <xtd/xtd>
+#include <bit>
+#include <bitset>
+#include <cassert>
+#include <chrono>
+#include <climits>
+#include <cmath>
+#include <csignal>
+#include <flat_map>
 #include <iostream>
+#include <optional>
+#include <source_location>
 #include <string>
+#include <stacktrace>
 #include <vector>
 
 using std::cin; using std::cout; using std::cerr; using std::clog; using std::endl; // NOT using namespace std; // duplicated here in case global_entities.hpp is not used.
@@ -54,14 +75,17 @@ namespace Example1 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 int main(int argc, char const * arv[]) {
-    //std::string my_arv{*arv}; cout << "$$ my_this: argc, argv:"<<argc<<","<<my_arv<<"."<<endl;
+    //string my_arv{*arv}; cout << "$$ my_this: argc, argv:"<<argc<<","<<my_arv<<"."<<endl;
     //cin.exceptions( std::istream::failbit);
     //Detail::crash_signals_register();
-    //Example1::test1 ();
 
-    //xtd::forms::application::run( View_main_form{} );
-    using namespace xtd;
-    forms::application::run( View_main_form{} );
+/*  manifest_files=(
+                "/usr/local/share/xtd/wxwidgets_release_install_manifest.txt"
+                "/usr/local/share/xtd/wxwidgets_debug_install_manifest.txt"
+                "/usr/local/share/xtd/xtd_release_install_manifest.txt"
+                "/usr/local/share/xtd/xtd_debug_install_manifest.txt") */
+
+    xtd::console::write_line("xtd_version:'{}''", xtd::environment());
 
     cout << "###" << endl;
     return EXIT_SUCCESS;

@@ -56,8 +56,10 @@
 #include <cmath>
 #include <csignal>
 #include <flat_map>
+#include <generator> // helps with coroutines
 #include <iostream>
 #include <optional>
+#include <ranges>
 #include <source_location>
 #include <string>
 #include <stacktrace>
@@ -68,31 +70,56 @@ using namespace std::string_literals;
 using namespace std::chrono_literals;
 
 namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    void f() {LOGGER_()
-        LOGGER_()
-    }
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 namespace Example1 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-    void f1 () { LOGGER_()
-        std::vector my_vec{1,2,3};  // If the index is unchecked, it may not get SIGSEGV at(3), or even much higher.
-        for (unsigned int i=0; i<(std::numeric_limits<size_t>::max()-1); ++i) { // TODO??: Why does this give compile warning and all below don't.
-        //auto near_max{std::numeric_limits<size_t>::max()-1}; for (unsigned int i=0; i<near_max; ++i) {
-        //for (unsigned int i=0; i<(std::numeric_limits<unsigned int>::max()); ++i) {
-        //for (size_t i=0; i<(std::numeric_limits<std::size_t>::max()); ++i) {
-            cout << my_vec[i] <<",";
+    int call_me_many_times( bool const restart=false ){
+        int const starting_number{0};
+        static int running_number{starting_number};
+        if (restart) running_number=starting_number;
+        ++running_number;
+        ///co_yield running_number;
+        return running_number;
+    }
+
+    std::generator<long long> fibonacci (int const end_sentinel_value) {
+        co_yield 1;
+        cout << "past 1." << endl;
+        int const starting_value{1};
+        long long a{1}, b{1};
+        //for (auto junk: std::ranges::iota_view{starting_value, end_sentinel_value} ) {
+        for (auto i=starting_value; i<end_sentinel_value; ++i ) {
+            auto res{a+b};
+            co_yield b;
+            a=b;
+            b=res;
         }
-        cout << endl;
-        LOGGER_()
     }
-    void test1 () { LOGGER_()
-        int *p{nullptr};
-        *p = 42;        // Triggers SIGSEGV
-        LOGGER_()
+
+    void test0 () { LOGGER_();
+        for (auto junk: std::ranges::iota_view{1, 12} ) {
+            cout << call_me_many_times() << ",";
+        }
+        cout << endl; LOGGER_();
     }
-    void test2 () {LOGGER_()
-        f1();
-        LOGGER_()
+    void test1 () { LOGGER_();
+        int end_sentinel_value{12};
+        for (auto value : fibonacci(end_sentinel_value) )
+            cout << value << endl;
+        cout << endl; LOGGER_();
+        for (auto value : fibonacci(10) )
+            cout << value << endl;
+        cout << endl; LOGGER_();
+    }
+    void test2 () { LOGGER_();
+        for (auto junk: std::ranges::iota_view{2, 5} ) {
+            cout << junk << ",";
+        }
+        cout << endl; LOGGER_("$ Above ranges, below simple for loop.")
+        for ( int i=2 ; i<5  ; ++i) {
+            cout << i << ",";
+        }
+        cout << endl; LOGGER_();
     }
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
@@ -101,17 +128,9 @@ int main(int argc, char const * arv[]) {
     cin.exceptions( std::istream::failbit);
     Detail::crash_signals_register();
 
-    std::string                 STRING_QQQ          {"qqq"};
-    std::vector<char>           VECTOR_CHAR_QQQ     {STRING_QQQ.begin(),STRING_QQQ.end()};
-
-    LOGGER_("testing LOGGER_");                   cout <<"my_endl"<<endl;
-    LOGGERX("testing LOGGERX",VECTOR_CHAR_QQQ);   cout <<"my_endl"<<endl;
-    cout << VECTOR_CHAR_QQQ <<                           "my_endl"<<endl;
-    LOGGER_R("testing LOGGER_R");                 cout <<"my_endl"<<endl;
-    LOGGERXR("testing LOGGERXR",VECTOR_CHAR_QQQ); cout <<"my_endl"<<endl;
-
-    Example1::test2 ();
+    //Example1::test0 ();
     Example1::test1 ();
+    //Example1::test2 ();
     cout << "###" << endl;
     return EXIT_SUCCESS;
 }

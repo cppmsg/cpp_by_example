@@ -6,7 +6,7 @@
  CONFIG -= qt
 
 QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/
-    -std=c++23		            \
+    -std=c++20		            \
     -g3 		                \
     -O0 		                \
     -pedantic                   \
@@ -15,9 +15,31 @@ QMAKE_CXXFLAGS += \                     #https://gcc.gnu.org/onlinedocs/gcc-13.2
     -Wextra   		            \
 
 LIBS += \                               # https://gcc.gnu.org/onlinedocs/gcc-13.2.0/gcc/Link-Options.html
+    -lwx_gtk3u_core-3.2 \
+    -lwx_baseu-3.2 \
+    \
+    -lgtk-3 \
+    -lgdk-3 \
+    -lz \
+    -lpangocairo-1.0 \
+    -lpango-1.0 \
+    -lharfbuzz \
+    -latk-1.0 \
+    -lcairo-gobject \
+    -lcairo \
+    -lgdk_pixbuf-2.0 \
+    -lgio-2.0 \
+    -lgobject-2.0 \
+    -lglib-2.0 \
+    \
+    -lasound                    \
+    -ldl                        \
    #-lpthread                   \
-   #-lrt                        \
-   #-lstdc++exp                 \-rw-r--r--. 1 root root   67041558 Feb  7  2024 -lwx_baseu    .a
+    -lrt                        \
+   #-lstdc++exp                 \
+    -luuid                      \
+    \
+   #-lwx_baseu                  \
    #-lwx_baseu_net              \
    #-lwx_baseu_xml              \
    #-lwxexpat                   \
@@ -33,23 +55,14 @@ LIBS += \                               # https://gcc.gnu.org/onlinedocs/gcc-13.
    #-lwx_gtk3u_stc              \
    #-lwx_gtk3u_xrc              \
    #-lwxscintilla               \
-   #-lxtd                       \
-   #-lxtd.core                  \
-    -lxtd.cored                 \
-   #-lxtd.core.native.linux     \
-    -lxtd.core.native.linuxd    \
-    -lxtdd                      \
-    -lxtd.drawing               \
-   #-lxtd.drawingd              \
-    -lxtd.drawing.native.wxwidgets\
-   #-lxtd.drawing.native.wxwidgetsd\
-    -lxtd.forms                 \
-   #-lxtd.formsd                \
-    -lxtd.forms.native.wxwidgets\
-   #-lxtd.forms.native.wxwidgetsd\
+                                \
     -lxtd.tunit                 \
-   #-lxtd.tunitd                \
-
+    -lxtd.forms                 \
+    -lxtd.forms.native.wxwidgets\
+    -lxtd.drawing               \
+    -lxtd.drawing.native.wxwidgets\
+    -lxtd.core                  \
+    -lxtd.core.native.linux     \
 
 HEADERS +=                      \
     controller.hpp              \
