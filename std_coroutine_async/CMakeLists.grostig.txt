@@ -48,14 +48,13 @@ add_executable( <EXECUTABLE_NAME>
 
 #https://cmake.org/cmake/help/latest/command/add_link_options.html#command:add_link_options
 #add_link_options(<option> ...)  Does NOT Work.
-#target_link_libraries(  <EXECUTABLE_NAME> -lstdc++_exp -lstdc++_libbacktrace)
-target_link_libraries(  <EXECUTABLE_NAME> -lstdc++_exp)
+target_link_libraries(  class_fully_defined -lstdc++_libbacktrace )
 #???string(APPEND CMAKE_EXE_LINKER_FLAGS " -fexceptions")
 #target_link_libraries(<EXECUTABLE_NAME> Boost::program_options)  # macOS
 
 ########################  other quality stuff ??
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-#include(ElementsConfigCommon)
+include(ElementsConfigCommon)
 option(ELEMENTS_BUILD_EXAMPLES "build Elements library examples" ON)
 option(ELEMENTS_ENABLE_LTO "enable link time optimization for Elements targets" OFF)
 set(ELEMENTS_HOST_UI_LIBRARY "" CACHE STRING "gtk, cocoa or win32")
@@ -69,8 +68,8 @@ if (ENABLE_GIT_SUBMODULE_CHECK)
       git_submodule_check(lib/infra)
    endif()
 endif()
-#add_subdirectory(lib)
-#if (ELEMENTS_BUILD_EXAMPLES)
-   #set(ELEMENTS_ROOT ${PROJECT_SOURCE_DIR})
-   #add_subdirectory(examples)
-#endif()
+add_subdirectory(lib)
+if (ELEMENTS_BUILD_EXAMPLES)
+   set(ELEMENTS_ROOT ${PROJECT_SOURCE_DIR})
+   add_subdirectory(examples)
+endif()

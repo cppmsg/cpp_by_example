@@ -165,7 +165,7 @@ Recommendation:
 
 
  */
-#include "global_entities.hpp"
+//#include "global_entities.hpp"
 //#include "boost_headers.hpp"
 //#include "cpp_headers.hpp"
 //#include "math_grostig.hpp"
@@ -176,7 +176,7 @@ Recommendation:
 //#include<dlib/numeric_constants.h>
 //#include <gsl/gsl>      // sudo dnf install  guidelines-support-library-devel
 //#include <bits/stdc++.h>
-#include <atomic>
+
 #include <bit>
 #include <bitset>
 #include <cassert>
@@ -185,15 +185,12 @@ Recommendation:
 #include <cmath>
 #include <coroutine>
 #include <csignal>
-#include <functional>
 #include <iostream>
 #include <syncstream>
-#include <mutex>
 #include <optional>
 #include <source_location>
 #include <string>
 #include <stacktrace>
-#include <stdexcept>
 #include <thread>
 #include <vector>
 
@@ -205,209 +202,22 @@ namespace Detail {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 namespace Example1 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-
-void input_thread_internal_f (std::stop_token const &st) {
-}
-
-void input_thread_f (std::stop_token const &st) {
-    std::string my_string {"is this temp?"};
-    std::string_view my_sview {"is this temp?"};
-    cin >> my_string;
-    std::osyncstream(cout) << my_string <<"."<< endl;  // TODO??: Is there an isyncstream
-}
-
-void output_thread_f (std::stop_token const &st) {
-    std::osyncstream(cout) << "hello world." << endl;
-}
-
-void output_thread_f1 () {
-    std::this_thread::sleep_for(std::chrono::seconds {99});
-    std::osyncstream(cout) << "hello world1." << endl;
-}
-
 void test1 () {
-    std::jthread my_input_jthread   {input_thread_f};
-    std::jthread my_output_jthread  {output_thread_f};
-    my_output_jthread.join();
-
-    std::thread  my_output_thread1 {output_thread_f1};
-    my_output_thread1.join();
 }
-
 } // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 namespace Example2 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-
-std::mutex  passed_string_mutex{};
-//bool printed{false}, first_run{true};
-std::atomic_bool printed{true}; // really?
-std::string my_string{};
-
-void input_thread_internal_f (std::stop_token const &my_stop_token ) { }
-
-void input_thread_f(std::stop_token const &my_stop_token_receiver, std::stop_source my_stop_source_output_remote_control) {
-    LOGGER_();
-    while ( not my_stop_token_receiver.stop_requested() ) {
-        {
-            std::scoped_lock lock{passed_string_mutex};
-            //assert( printed && first_run );
-            while (not printed.load()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10) ); // std::this_thread::yield();
-                LOGGER_();
-            }
-            cin >> my_string;
-            if ("q"s == my_string) break;
-            printed=false;
-        }
-    }
-    my_stop_source_output_remote_control.request_stop();
-}
-
-void output_thread_f (std::stop_token const &my_stop_token ) {
-    LOGGER_();
-    while ( not my_stop_token.stop_requested() ) {
-        {
-            std::scoped_lock lock{passed_string_mutex}; // Wait till we have something we want printed. and it is test1 that sends it to us.
-            if (not printed.load()) {
-                LOGGER_();
-                cout << my_string << endl;
-                printed.store(true);
-            }
-            // got_output_work?() print_stuff_we_want_printed;
-        }
-    }
-    // we are totally done, never to come back here.
-}
-
 void test1 () {
-    LOGGER_();
-    std::jthread my_output_jthread  {output_thread_f};
-    std::jthread my_input_jthread   {input_thread_f, my_output_jthread.get_stop_source()};
-
-    if ( my_string form input_thread == "tellajoke" ) {
-        tell output_thread to print a joke";
-    }
-
-    if ( my_string == "tellasadstory" ) {
-        tell output thread to print a sadstory";"
-    }
-
-    // Input and output stuff happens in the above threads, which are still running at this line number in main thread.
 }
-} // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-
-namespace Example3 {  // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
-// senderReceiver.cpp  https://www.modernescpp.com/index.php/c-20-thread-synchronization-with-coroutines/
-class Event {
-public:
-    Event() = default;
-    Event(const Event&) = delete;
-    Event(Event&&) = delete;
-    Event& operator=(const Event&) = delete;
-    Event& operator=(Event&&) = delete;
-    class Awaiter;
-    Awaiter operator co_await() const noexcept;
-    void notify() noexcept;
-private:
-    friend class Awaiter;
-    mutable std::atomic<void*> suspendedWaiter{nullptr};
-    mutable std::atomic<bool> notified{false};
-};
-
-class Event::Awaiter {
-public:
-    Awaiter(const Event& eve): event(eve) {}
-    bool await_ready() const;
-    bool await_suspend(std::coroutine_handle<> corHandle) noexcept;
-    void await_resume() noexcept {}
-private:
-    friend class Event;
-    const Event& event;
-    std::coroutine_handle<> coroutineHandle;
-};
-
-bool Event::Awaiter::await_ready() const {                            // (7)
-    if (event.suspendedWaiter.load() != nullptr){ // allow at most one waiter
-        throw std::runtime_error("More than one waiter is not valid");
-    }
-           // event.notified == false; suspends the coroutine
-           // event.notified == true; the coroutine is executed such as a usual function
-    return event.notified;
-}
-bool Event::Awaiter::await_suspend(std::coroutine_handle<> corHandle) noexcept {
-    coroutineHandle = corHandle;
-    if (event.notified) return false;
-           // store the waiter for later notification
-    event.suspendedWaiter.store(this);
-    return true;
-}
-
-void Event::notify() noexcept {                                        // (6)
-    notified = true;
-    auto* waiter = static_cast<Awaiter*>(suspendedWaiter.load()); // try to load the waiter
-    if (waiter != nullptr) { // check if a waiter is available
-        // resume the coroutine => await_resume
-        waiter->coroutineHandle.resume();
-    }
-}
-
-Event::Awaiter
-Event::operator co_await() const noexcept {
-    return Awaiter{ *this };
-}
-
-struct Task {
-    struct promise_type {
-        Task get_return_object() { return {}; }
-        std::suspend_never initial_suspend() { return {}; }
-        std::suspend_never final_suspend() noexcept { return {}; }
-        void return_void() {}
-        void unhandled_exception() {}
-    };
-};
-
-Task receiver(Event& event) noexcept {                                        // (3)
-   auto start = std::chrono::high_resolution_clock::now();
-   co_await event;
-   std::cout << "Got the notification! " << std::endl;
-   auto end = std::chrono::high_resolution_clock::now();
-   std::chrono::duration<double> elapsed = end - start;
-   std::cout << "Waited " << elapsed.count() << " seconds." << std::endl;
-}
-
-int test1() {
-    std::cout << endl << "Notification before waiting" << std::endl;
-    Event event1{};
-    auto senderThread1 = std::thread([&event1]{ event1.notify(); });  // (1)
-    auto receiverThread1 = std::thread(receiver, std::ref(event1));   // (4)
-
-    receiverThread1.join();
-    senderThread1.join();
-
-    std::cout << std::endl;
-
-    std::cout << "Notification after 2 seconds waiting" << std::endl;
-    Event event2{};
-    auto receiverThread2 = std::thread(receiver, std::ref(event2));  // (5)
-    auto senderThread2 = std::thread([&event2]{
-        std::this_thread::sleep_for(2s);
-        event2.notify();                                               // (2)
-    });
-    receiverThread2.join();
-    senderThread2.join();
-    std::cout << std::endl;
-}
-} // NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+} // END namespace NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
 
 int main(int argc, char const * arv[]) {
     std::string my_arv{*arv}; cout << "$$ ~~~ argc, argv:"<<argc<<","<<my_arv<<"."<<endl;
     cin.exceptions( std::istream::failbit);
     //Detail::crash_signals_register();
 
-    // RENAME THIS PROJECT for multithreading ??
     //Example1::test1 ();
     Example2::test1 ();
-    //Example3::test1 ();
     cout << "###" << endl;
     return EXIT_SUCCESS;
 }
