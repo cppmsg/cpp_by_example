@@ -1,0 +1,98 @@
+
+
+````json
+{
+  "prompt": {
+    "projectName": "MyCoolApp",
+    "description": "A simple cross‑platform CLI tool that reads a list of numbers from a file, sorts them, and prints statistics.",
+    "requirements": [
+      "C++17 or later",
+      "Cross‑platform (Windows, Linux, macOS)",
+      "Use CMake as build system",
+      "Separation of interface and implementation",
+      "Include unit tests with Catch2"
+    ],
+    "structure": {
+      "rootFiles": [
+        "CMakeLists.txt",
+        "README.md"
+      ],
+      "directories": {
+        "src": "All .cpp source files",
+        "include": "All .hpp header files",
+        "tests": "Unit tests"
+      }
+    },
+    "files": [
+      {
+        "path": "CMakeLists.txt",
+        "type": "build-config",
+        "template": "cmake_minimum_required(VERSION 3.10)\nproject(MyCoolApp VERSION 1.0 LANGUAGES CXX)\nset(CMAKE_CXX_STANDARD 17)\nadd_subdirectory(src)\nadd_subdirectory(tests)"
+      },
+      {
+        "path": "README.md",
+        "type": "documentation",
+        "template": "# MyCoolApp\n\nA CLI tool to sort numbers and display statistics.\n\n## Build Instructions\n```bash\nmkdir build && cd build\ncmake ..\nmake\n```"
+      },
+      {
+        "path": "src/CMakeLists.txt",
+        "type": "build-config",
+        "template": "add_library(core STATIC main.cpp sorter.cpp stats.cpp)\ntarget_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/../include)"
+      },
+      {
+        "path": "src/main.cpp",
+        "type": "source",
+        "template": "#include <iostream>\n#include \"sorter.hpp\"\n#include \"stats.hpp\"\n\nint main(int argc, char** argv) {\n    // TODO: parse args, read file, call sort and stats, print results\n    return 0;\n}"
+      },
+      {
+        "path": "include/sorter.hpp",
+        "type": "header",
+        "template": "#pragma once\n#include <vector>\n\nnamespace myapp {\n    std::vector<int> sort_numbers(const std::vector<int>& input);\n}"
+      },
+      {
+        "path": "src/sorter.cpp",
+        "type": "source",
+        "template": "#include \"sorter.hpp\"\n#include <algorithm>\n\nnamespace myapp {\n    std::vector<int> sort_numbers(const std::vector<int>& input) {\n        auto v = input;\n        std::sort(v.begin(), v.end());\n        return v;\n    }\n}"
+      },
+      {
+        "path": "include/stats.hpp",
+        "type": "header",
+        "template": "#pragma once\n#include <vector>\n\nnamespace myapp {\n    struct Stats { double mean; double median; };\n    Stats compute_stats(const std::vector<int>& data);\n}"
+      },
+      {
+        "path": "src/stats.cpp",
+        "type": "source",
+        "template": "#include \"stats.hpp\"\n#include <algorithm>\n\nnamespace myapp {\n    Stats compute_stats(const std::vector<int>& data) {\n        Stats s{};\n        if (data.empty()) return s;\n        // TODO: implement mean and median calculations\n        return s;\n    }\n}"
+      },
+      {
+        "path": "tests/CMakeLists.txt",
+        "type": "build-config",
+        "template": "enable_testing()\nadd_executable(test_core sorter_tests.cpp stats_tests.cpp)\ntarget_link_libraries(test_core core)\nadd_test(NAME CoreTests COMMAND test_core)"
+      },
+      {
+        "path": "tests/sorter_tests.cpp",
+        "type": "test",
+        "template": "#define CATCH_CONFIG_MAIN\n#include <catch2/catch.hpp>\n#include \"sorter.hpp\"\n\nTEST_CASE(\"sort_numbers sorts ascending\") {\n    std::vector<int> in{3,1,2};\n    auto out = myapp::sort_numbers(in);\n    REQUIRE(out == std::vector<int>{1,2,3});\n}"
+      },
+      {
+        "path": "tests/stats_tests.cpp",
+        "type": "test",
+        "template": "#include <catch2/catch.hpp>\n#include \"stats.hpp\"\n\nTEST_CASE(\"compute_stats on empty data\") {\n    auto s = myapp::compute_stats({});\n    REQUIRE(s.mean == 0);\n    REQUIRE(s.median == 0);\n}"
+      }
+    ]
+  },
+  "generationSettings": {
+    "model": "gpt-4o",
+    "temperature": 0.2,
+    "maxTokens": 2000,
+    "language": "cpp"
+  }
+}
+````
+
+**How to use this JSON**
+
+1. **Feed** the entire JSON to your LLM of choice.
+2. Instruct the model: “Read the `prompt` section and output each file under `files` as separate files with the given paths and content templates filled in.”
+3. The LLM will then generate a real C++ codebase matching your requirements and structure—perfect for scaffolding new projects.
+

@@ -1,0 +1,79 @@
+create, code and show a JSON file used for prompting LLM to produce c++ program code and files. create a JSON file that defines a structured prompt for an LLM to generate C++ program code and files. This will include specifications for the program requirements, code structure, and file organization.
+
+++++++++++++++++++++++++++++++++++++++
+{
+  "prompt_type": "cpp_code_generation",
+  "program_details": {
+    "program_name": "ExampleCppProgram",
+    "description": "A simple C++ program that demonstrates basic object-oriented principles, including a class with member variables and methods, and a main function to interact with an object of that class.",
+    "purpose": "Educational demonstration of C++ class usage.",
+    "target_audience": "Beginner C++ programmers.",
+    "requirements": [
+      "Define a class named 'Car' with private member variables: 'make' (string), 'model' (string), and 'year' (int).",
+      "Implement a public constructor for 'Car' that initializes all member variables.",
+      "Implement public getter methods for 'make', 'model', and 'year'.",
+      "Implement a public method 'displayInfo()' that prints the car's make, model, and year to the console.",
+      "The 'main' function should create at least two 'Car' objects.",
+      "The 'main' function should call 'displayInfo()' for each 'Car' object.",
+      "Include necessary headers (e.g., <iostream>, <string>).",
+      "Use standard C++ practices (e.g., `std::cout`, `std::string`)."
+    ]
+  },
+  "code_structure": {
+    "language": "C++",
+    "standard": "C++17",
+    "coding_style": "Google C++ Style Guide (simplified for brevity)",
+    "error_handling_level": "Basic (e.g., simple checks, no complex exception handling)",
+    "comments": "Thorough comments for classes, methods, and complex logic.",
+    "function_prototypes": "Yes, if functions are defined after main or in separate files.",
+    "namespaces": "Use `std` namespace explicitly (e.g., `std::cout`) or `using namespace std;` for simplicity in small examples."
+  },
+  "file_organization": {
+    "main_file": {
+      "name": "main.cpp",
+      "content_description": "Contains the main function and potentially class definitions if not separated."
+    },
+    "class_files": [
+      {
+        "name": "Car.h",
+        "content_description": "Header file for the Car class declaration.",
+        "includes": ["<string>"]
+      },
+      {
+        "name": "Car.cpp",
+        "content_description": "Source file for the Car class implementation.",
+        "includes": ["\"Car.h\"", "<iostream>"]
+      }
+    ],
+    "build_system": {
+      "type": "CMake",
+      "cmake_version": "3.10",
+      "project_name": "CarProject",
+      "executables": [
+        {
+          "name": "car_app",
+          "sources": ["main.cpp", "Car.cpp"]
+        }
+      ]
+    },
+    "other_files": [
+      {
+        "name": "README.md",
+        "content_description": "Basic instructions on how to compile and run the program."
+      }
+    ]
+  },
+  "output_format": {
+    "type": "multiple_files",
+    "file_separator": "---FILE_SEPARATOR---",
+    "file_header_prefix": "---FILENAME:",
+    "file_header_suffix": "---"
+  },
+  "examples": [
+    {
+      "example_name": "Car Class Definition (Car.h)",
+      "code_snippet": "class Car {\nprivate:\n    std::string make;\n    std::string model;\n    int year;\npublic:\n    Car(std::string make, std::string model, int year);\n    std::string getMake() const;\n    // ... other getters and displayInfo()\n};"
+    }
+  ]
+}
+

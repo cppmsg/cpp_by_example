@@ -1,5 +1,5 @@
+# Original project name and dir: qt_QtQuickApplication_template_cmake
 cmake_minimum_required(VERSION 3.16)
-
 project(qt_QtQuickApplication_template_cmake VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

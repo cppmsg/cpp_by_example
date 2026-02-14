@@ -15,25 +15,28 @@ block(COMMENT "*** Comment BEGIN ***")
 # $ cmake --build . --verbose
 # ? $ make VERBOSE=1 # not sure what this is?
 endblock(COMMENT "*** Comment END ***")
+
 cmake_minimum_required(VERSION 3.31)  # cmake_minimum_required(VERSION 3.9.6...3.15.0)
-set(CMAKE_CXX_STANDARD 23)
-if(CMAKE_CXX_STANDARD LESS 17)
+set(CMAKE_CXX_STANDARD 23)                                          # set_property(CMAKE_CXX_STANDARD 23)  #TODO??: old?
+ if(CMAKE_CXX_STANDARD LESS 17)
    set(CMAKE_CXX_STANDARD 17)
-endif()
-# set_property(CMAKE_CXX_STANDARD 23)  #TODO??:
+ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)  # Doesn't seem to do anything ??
 set(CXX_STANDARD 23)
 set(CXX_STANDARD_REQUIRED ON)
 set(CXX_EXTENSIONS OFF)
+
 # Compile otions: https://cmake.org/cmake/help/latest/prop_sf/COMPILE_OPTIONS.html#prop_sf:COMPILE_OPTIONS
 # TODO??: add_compile_definitions("NO_DEBUG")
 add_compile_options( -Wall -Wextra -pedantic -pedantic-errors -Wno-unused-variable ) # -fsanitize=undefined)
 # Compile New in 3.11 https://cmake.org/cmake/help/latest/prop_sf/COMPILE_OPTIONS.html#prop_sf:COMPILE_OPTIONS
 set_source_files_properties(<NAME>.cpp PROPERTIES COMPILE_OPTIONS "-Wno-unused-parameter;-Wno-missing-field-initializer")
-find_package( Boost 1.81 )  # find_package(Boost 1.81 COMPONENTS program_options REQUIRED)
+find_package( Boost 1.81 )                                  # find_package(Boost 1.81 COMPONENTS program_options REQUIRED)
 include_directories( src, include )  # TODO??: does this include the subdirectories too?
+
 project( <EXECUTABLE_NAME> VERSION 0.1 LANGUAGES CXX )
 add_executable( <EXECUTABLE_NAME>
         src/main.cpp
@@ -48,9 +51,32 @@ add_executable( <EXECUTABLE_NAME>
 target_link_libraries(  <EXECUTABLE_NAME> -lstdc++_exp) # Others for Fedora: -lstdc++_libbacktrace
 
 block(COMMENT "*** Comment BEGIN ***") # *** Qt STUFF *** Original project name and dir: qt_QtQuickApplication_template_cmake
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Quick)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS                    Core Widgets Quick LinguistTools)
+find_package(QT${QT_VERSION_MAJOR} NAMES Qt6 REQUIRED COMPONENTS Core Widgets Quick LinguistTools)
+set(TS_FILES designp_active_object_concurrency_console_en_US.ts)
+qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+
 qt_standard_project_setup(REQUIRES 6.9)
-qt_add_qml_module(app<EXECUTABLE_NAME>
+
+set(PROJECT_SOURCES
+        main.cpp
+      # <>.cpp
+      # <>.hpp
+      # <>.ui
+      # ${TS_FILES}
+)
+qt_add_executable( <EXECUTABLE_NAME>
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+)
+
+# TODO??: what!? - Define target properties for Android with Qt 6 as: set_property(TARGET designp_active_object_concurrency_console APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android ) For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+
+qt_add_qml_module( app<EXECUTABLE_NAME>                 # TODO??: or maybe not app< prefix
     URI <EXECUTABLE_NAME>
     VERSION 1.0
     QML_FILES
@@ -58,24 +84,31 @@ qt_add_qml_module(app<EXECUTABLE_NAME>
         SOURCES <1>.hpp <1>.cpp
         SOURCES <2>.hpp <2>.cpp
 )
+
 set_target_properties(appqt_QtQuickApplication_template_cmake PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.app<Executable_name>
+    ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
-target_link_libraries(app<EXECUTABLE_NAME>
-    PRIVATE Qt6::Quick
+
+target_link_libraries( app<EXECUTABLE_NAME> PRIVATE
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Quick
 )
-target_link_libraries(app<EXECUTABLE_NAME> PRIVATE Qt6::Core Qt6::Widgets Qt6::Quick)
 include(GNUInstallDirs)
-install(TARGETS app<EXECUTABLE_NAME>
+install(TARGETS <EXECUTABLE_NAME>            # for sometimes app<EXECUTABLE_NAME>
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(designp_active_object_concurrency_console)
+endif()
 endblock(COMMENT "*** Comment END ***")
+
 block(COMMENT "*** Comment BEGIN ***") # ***  OTHER quality stuff? TODO??:
 set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(<Executable_name>ConfigCommon)
@@ -93,8 +126,12 @@ if (ENABLE_GIT_SUBMODULE_CHECK)
    endif()
 endif()
 add_subdirectory(lib)
+
+
+
 # if (EXECUTABLE_NAME>_BUILD_EXAMPLES)
    # set(EXECUTABLE_NAME>_ROOT ${PROJECT_SOURCE_DIR})
    # add_subdirectory(examples)
 # endif()
+
 endblock(COMMENT "*** Comment END ***")

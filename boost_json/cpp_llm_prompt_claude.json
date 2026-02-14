@@ -1,0 +1,152 @@
+{
+  "prompt_config": {
+    "task_type": "cpp_code_generation",
+    "version": "1.0",
+    "model_instructions": "Generate complete C++ program code and files based on the specifications below"
+  },
+  "project_specifications": {
+    "project_name": "TaskManager",
+    "project_type": "console_application",
+    "cpp_standard": "C++17",
+    "compiler": "g++",
+    "build_system": "CMake",
+    "description": "A simple task management system with file persistence"
+  },
+  "requirements": {
+    "functional_requirements": [
+      "Create and manage tasks with title, description, and priority",
+      "Save tasks to file and load on startup",
+      "Display all tasks in formatted output",
+      "Mark tasks as completed",
+      "Delete tasks by ID"
+    ],
+    "technical_requirements": [
+      "Use object-oriented design with proper encapsulation",
+      "Implement file I/O for data persistence",
+      "Use STL containers and algorithms",
+      "Handle exceptions properly",
+      "Include unit tests"
+    ],
+    "constraints": [
+      "No external dependencies beyond standard library",
+      "Cross-platform compatibility",
+      "Maximum 500 lines of code per file"
+    ]
+  },
+  "file_structure": {
+    "source_files": [
+      {
+        "filename": "main.cpp",
+        "purpose": "Entry point and main application logic",
+        "includes": ["TaskManager.h", "iostream", "stdexcept"]
+      },
+      {
+        "filename": "Task.h",
+        "purpose": "Task class declaration",
+        "content_type": "header"
+      },
+      {
+        "filename": "Task.cpp",
+        "purpose": "Task class implementation",
+        "includes": ["Task.h"]
+      },
+      {
+        "filename": "TaskManager.h",
+        "purpose": "TaskManager class declaration",
+        "content_type": "header"
+      },
+      {
+        "filename": "TaskManager.cpp",
+        "purpose": "TaskManager class implementation with file I/O",
+        "includes": ["TaskManager.h", "fstream", "algorithm"]
+      }
+    ],
+    "build_files": [
+      {
+        "filename": "CMakeLists.txt",
+        "purpose": "CMake build configuration"
+      },
+      {
+        "filename": "Makefile",
+        "purpose": "Alternative build system"
+      }
+    ],
+    "test_files": [
+      {
+        "filename": "test_task.cpp",
+        "purpose": "Unit tests for Task class"
+      }
+    ]
+  },
+  "code_style": {
+    "naming_convention": {
+      "classes": "PascalCase",
+      "functions": "camelCase",
+      "variables": "camelCase",
+      "constants": "UPPER_CASE",
+      "files": "PascalCase"
+    },
+    "formatting": {
+      "indentation": "4 spaces",
+      "brace_style": "Allman",
+      "line_length": 80,
+      "include_guards": "pragma_once"
+    }
+  },
+  "class_design": {
+    "Task": {
+      "attributes": [
+        "int id",
+        "std::string title",
+        "std::string description",
+        "Priority priority",
+        "bool completed"
+      ],
+      "methods": [
+        "Task(int id, const std::string& title, const std::string& description, Priority priority)",
+        "int getId() const",
+        "std::string getTitle() const",
+        "std::string getDescription() const",
+        "Priority getPriority() const",
+        "bool isCompleted() const",
+        "void setCompleted(bool completed)",
+        "std::string toString() const"
+      ]
+    },
+    "TaskManager": {
+      "attributes": [
+        "std::vector<Task> tasks",
+        "std::string filename",
+        "int nextId"
+      ],
+      "methods": [
+        "TaskManager(const std::string& filename)",
+        "void addTask(const std::string& title, const std::string& description, Priority priority)",
+        "void removeTask(int id)",
+        "void markCompleted(int id)",
+        "void displayTasks() const",
+        "void saveToFile() const",
+        "void loadFromFile()",
+        "Task* findTask(int id)"
+      ]
+    }
+  },
+  "enums": {
+    "Priority": ["LOW", "MEDIUM", "HIGH", "URGENT"]
+  },
+  "output_format": {
+    "file_separator": "// ==================== FILE: {filename} ====================",
+    "include_comments": true,
+    "include_documentation": true,
+    "example_usage": true
+  },
+  "additional_instructions": [
+    "Include comprehensive error handling",
+    "Add inline comments for complex logic",
+    "Provide example usage in main.cpp",
+    "Ensure all files compile without warnings",
+    "Use const-correctness throughout",
+    "Implement proper RAII patterns"
+  ],
+  "sample_prompt": "Based on the specifications above, generate a complete C++ program that implements a task management system. Include all specified files with proper class design, error handling, and file persistence. Ensure the code follows the specified style guidelines and includes example usage."
+}

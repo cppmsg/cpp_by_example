@@ -1,0 +1,71 @@
+.gitignore.swp
+.vscode
+.gdb*
+*.tar
+*/build/
+# */src/
+*/inc/
+
+
+Futurex_code_2019.txt
+*.zip
+# C++ objects and libs
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
+
+# Qt-es
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qmlc
+*.jsc
+#Makefile*
+*build-*
+
+# Qt unit tests
+target_wrapper.*
+
+# QtCreator
+*.autosave
+
+# QtCreator Qml
+*.qmlproject.user
+*.qmlproject.user.*
+
+# QtCreator CMake
+CMakeLists.txt.user*
+*.db
+print_code_listing_test/.vs/slnx.sqlite
+print_code_listing_test/.vs/ProjectSettings.json
+*.ipch
+print_code_listing_test/.vs/print_code_listing_test/v16/Browse.VC.opendb
+print_code_listing_test/.vs/print_code_listing_test/v16/Browse.VC.db-wal
+print_code_listing_test/.vs/print_code_listing_test/v16/Browse.VC.db-shm
+*.idb
+*.pdb
+mutex/.vs/mutex/v16/.suo
+*.exe
+*.obj
+*.tlog
+*.ilk
+*.recipe
+*.log
+iterator_bitset_plus/a.out
