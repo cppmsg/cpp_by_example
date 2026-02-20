@@ -1,10 +1,12 @@
-int main() {
-    bank_machine bank;
-    interface_machine interface_hardware;
-    atm machine(bank.get_sender(),interface_hardware.get_sender());
-    std::thread bank_thread(&bank_machine::run,&bank);
-    std::thread if_thread(&interface_machine::run,&interface_hardware);
-    std::thread atm_thread(&atm::run,&machine);
+#include <thread>
+int
+main() {
+    Bank_machine      bank;
+    Interface_machine interface_hardware;
+    Atm               machine(bank.get_sender(),interface_hardware.get_sender());
+    std::thread       bank_thread(&bank_machine::run,&bank);
+    std::thread       if_thread(&interface_machine::run,&interface_hardware);
+    std::thread       atm_thread(&atm::run,&machine);
     Messaging::sender atmqueue(machine.get_sender());
     bool quit_pressed=false;
     while(!quit_pressed) {

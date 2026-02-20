@@ -1,3 +1,4 @@
+#include <string>
 class Atm {
     Messaging::receiver incoming;
     Messaging::sender bank;

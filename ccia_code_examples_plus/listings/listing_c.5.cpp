@@ -1,7 +1,9 @@
+#include <memory>
+#include <utility>
 namespace Messaging {
     template<typename PreviousDispatcher,typename Msg,typename Func>
     class TemplateDispatcher {
-        queue* q;
+        Queue* q;
         PreviousDispatcher* prev;
         Func f;
         bool chained;
@@ -17,8 +19,8 @@ namespace Messaging {
             }
         }
 
-        bool dispatch(std::shared_ptr<message_base> const& msg) {
-            if(wrapped_message<Msg>* wrapper= dynamic_cast<wrapped_message<Msg>*>(msg.get())) {
+        bool dispatch(std::shared_ptr<Message_base> const& msg) {
+            if(Wrapped_message<Msg>* wrapper= dynamic_cast<wrapped_message<Msg>*>(msg.get())) {
                 f(wrapper->contents);
                 return true;
             }
@@ -31,7 +33,7 @@ namespace Messaging {
             other.chained=true;
         }
 
-        TemplateDispatcher(queue* q_,PreviousDispatcher* prev_,Func&& f_)
+        TemplateDispatcher(Queue* q_,PreviousDispatcher* prev_,Func&& f_)
             : q(q_),prev(prev_),f(std::forward<Func>(f_)),chained(false)
         {
             prev_->chained=true;

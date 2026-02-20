@@ -1,3 +1,4 @@
+#include <string>
 struct withdraw {
     std::string account;
     unsigned amount;

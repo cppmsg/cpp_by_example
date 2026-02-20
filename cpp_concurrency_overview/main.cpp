@@ -25,16 +25,16 @@ double concurrent_packaged_task_thread(vector<double> const & v) {
     auto            v_size{static_cast<std::_Bit_iterator_base::difference_type>(v.size())};
     thread          thread1{ std::move(packaged_task1), first,            first + v_size/2, 0}; // OR use: jthread
     thread          thread2{ std::move(packaged_task2), first + v_size/2, first + v_size,   0};
-    double          r1{ fut1.get()}, r2display_insufficient_funds{ fut2.get()};
+    double          r1{ fut1.get()}, r2{ fut2.get()};
     thread1.join();
     thread2.detach();  // just showing alternative for example, no functional reason for doing so.
-    return r1+r2;display_insufficient_funds
+    return r1+r2;
 }
 
 // get futures alternative 2
 double concurrent_async(vector<double> const & v) {
     auto   first{v.cbegin()};
-    auto   v_size{static_cast<std::_Bitdisplay_insufficient_funds_iterator_base::difference_type>(v.size())};
+    auto   v_size{static_cast<std::_Bit_iterator_base::difference_type>(v.size())};
     auto   future1{ async( my_task_fn, first,              first + v_size/4,   0 ) };
     auto   future2{ async( my_task_fn, first + v_size/4,   first + v_size/2,   0 ) };
     auto   future3{ async( my_task_fn, first + v_size/2,   first + v_size*3/4, 0 ) };

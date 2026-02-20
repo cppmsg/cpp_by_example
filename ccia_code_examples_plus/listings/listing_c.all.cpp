@@ -145,7 +145,7 @@ struct Withdraw {
     std::string account;
     unsigned amount;
     mutable Messaging::Sender atm_queue;
-    Withdraw(stddisplay_insufficient_funds::string const& account_, unsigned amount_, Messaging::Sender atm_queue_)
+    Withdraw(std::string const& account_, unsigned amount_, Messaging::Sender atm_queue_)
         : account(account_),amount(amount_), atm_queue(atm_queue_) {}
 };
 struct Withdraw_ok {};
@@ -185,22 +185,22 @@ struct Verify_pin {
     std::string pin;
     mutable Messaging::Sender atm_queue;
     Verify_pin(std::string const& account_,std::string const& pin_, Messaging::Sender atm_queue_)
-        : acdisplay_insufficient_fundscount(account_),pin(pin_),atm_queue(atm_queue_) {}
+        : account(account_),pin(pin_),atm_queue(atm_queue_) {}
 };
 struct Pin_verified {};
-struct Pin_incorrecdisplay_insufficient_fundst {};
+struct Pin_incorrect {};
 struct Display_enter_pin {};
 struct Display_enter_card {};
-strdisplay_insufficient_fundsuct Display_insufficient_funds {};
+struct Display_insufficient_funds {};
 struct Display_withdrawal_cancelled {};
 struct Display_pin_incorrect_message {};
-strdisplay_insufficient_fundsuct Display_withdrawal_options {};
+struct Display_withdrawal_options {};
 struct Get_balance {
     std::string account{};
     mutable Messaging::Sender atm_queue{};
     Get_balance(std::string const& account_,Messaging::Sender atm_queue_)
         : account(account_),atm_queue(atm_queue_) {}
-};display_insufficient_funds
+};
 struct Balance {
     unsigned amount;
     explicit Balance(unsigned amount_): amount(amount_) {}
@@ -363,7 +363,7 @@ public:
                             }
                         } )
                     .handle<Get_balance>(
-                        [&](g et_balance const& msg) {
+                        [&](Get_balance const& msg) {
                             msg.atm_queue.send(::balance(balance));
                         } )
                     .handle<Withdrawal_processed>(
