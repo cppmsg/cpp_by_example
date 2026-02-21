@@ -1,5 +1,6 @@
-#include "listing_4.15.cpp"
-void Atm::getting_pin() {
+//#include "listing_4.15.atm.cpp"
+#include "listing_c.classes.cpp"
+void Atm_machine::getting_pin() {
     incoming.wait()
         .handle<digit_pressed>(
             [&](digit_pressed const& msg)

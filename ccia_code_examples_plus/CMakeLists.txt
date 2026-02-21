@@ -36,9 +36,9 @@ set (SRCS README.md
    #listings/listing_4.12.cpp
    #listings/listing_4.13.cpp
    #listings/listing_4.14.cpp
-    listings/listing_4.15.cpp
-    listings/listing_4.16.cpp
-    listings/listing_4.17.spawn_async.cpp
+   #listings/listing_4.15.atm.cpp
+   #listings/listing_4.16.atm.getting_pin.cpp
+   #listings/listing_4.17.spawn_async.cpp
    #listings/listing_4.18.cpp
    #listings/listing_4.19.cpp
    #listings/listing_4.2.cpp
@@ -135,20 +135,21 @@ set (SRCS README.md
    #listings/listing_a.2.cpp
    #listings/listing_a.3.cpp
    #listings/listing_a.4.cpp
-    listings/listing_c.1.cpp
-    listings/listing_c.10.cpp
-    listings/listing_c.2.cpp
-    listings/listing_c.3.cpp
-    listings/listing_c.4.cpp
-    listings/listing_c.5.cpp
-    listings/listing_c.6.cpp
-    listings/listing_c.7.cpp
-    listings/listing_c.8.cpp
-    listings/listing_c.9.cpp
-    listings/listing_c.all.cpp
+   #listings/listing_c.1.cpp
+   #listings/listing_c.10.cpp
+   #listings/listing_c.2.cpp
+   #listings/listing_c.3.cpp
+   #listings/listing_c.4.cpp
+   #listings/listing_c.5.cpp
+   #listings/listing_c.6.cpp
+   #listings/listing_c.7.cpp
+   #listings/listing_c.8.cpp
+   #listings/listing_c.9.cpp
+   listings/listing_c.classes.cpp
 )
 project(ccia_code_samples_all)
-add_executable(${CMAKE_PROJECT_NAME} ${SRCS})
+add_executable(${CMAKE_PROJECT_NAME} ${SRCS}
+   listings/listing_c.main.cpp)
 # set(CMAKE_AUTOUIC ON)
 # set(CMAKE_AUTOMOC ON)
 # set(CMAKE_AUTORCC ON)

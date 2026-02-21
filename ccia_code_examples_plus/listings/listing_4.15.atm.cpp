@@ -1,4 +1,5 @@
 #include <string>
+#include "listing_c.all.nomain.cpp"
 struct Card_inserted { std::string account;  };
 
 int my_int{};

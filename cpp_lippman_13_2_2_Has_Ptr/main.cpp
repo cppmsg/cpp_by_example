@@ -1,7 +1,8 @@
 #include <iostream>
 using namespace std;
-//A friend is tutoring using The C++ Primer, 5th Ed. He sent me this: My student pointed out that the Copy-Assignment implementation in section 13.2.2 seems to access memory behind deleted pointers in some cases.  To wit:
-//'seems like these assignments could be referencing deleted objects.
+// A friend is tutoring using The C++ Primer, 5th Ed. He sent me this:
+// My student pointed out that the Copy-Assignment implementation in section 13.2.2 seems to access memory behind deleted pointers in some cases.
+// To wit: 'seems like these assignments could be referencing deleted objects.
 class HasPtr {
     int i{};
     int *the_single_use_count_for_shared_ptr{};       // for my c based std::shared_pointer
@@ -10,11 +11,11 @@ public:
     HasPtr& operator=(const HasPtr &rhs);  // now I have to create: constructor/destructor and everything else...
 };
 HasPtr& HasPtr::operator=(HasPtr const &rhs) { // parameter is & to avoid copy // binary operator
-    ++(*(rhs.the_single_use_count_for_shared_ptr));         // increment the use count of the right hand operand
-                                  // NOT: ++(*(this.use_count));         // increment the use count of the right hand operand
-  //if (--(*use_count) == 0) {  // then decrement this object's counter
-    if (--(*( this->the_single_use_count_for_shared_ptr))== 0) {  // then decrement this object's counter
+    ++(*(rhs.the_single_use_count_for_shared_ptr));  // increment the use count of the right hand operand
+                                                     // NOT: ++(*(this.use_count));         // increment the use count of the right hand operand
+  //if (--(        *the_single_use_count_for_shared_ptr) == 0) {  // then decrement this object's counter
   //if (--(*(*this).the_single_use_count_for_shared_ptr) == 0) {  // then decrement this object's counter
+    if (--(*( this->the_single_use_count_for_shared_ptr))== 0) {  // then decrement this object's counter
         delete some_pointer;      // if no other users free this object's allocated members
         delete the_single_use_count_for_shared_ptr;
     }
@@ -24,6 +25,8 @@ HasPtr& HasPtr::operator=(HasPtr const &rhs) { // parameter is & to avoid copy /
     return *this;
 }
 int main() {
+    cout << "Do something." << endl;
+    XXX Crashes!  // TODO??:
     HasPtr shared_p_lhs{},shared_p_rhs{};
     shared_p_lhs=shared_p_rhs;
     shared_p_lhs=shared_p_lhs; // a no-op, strange thing to do, copy/assign and then free what is in lhs
